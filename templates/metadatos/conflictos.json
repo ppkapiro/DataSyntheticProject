@@ -1,0 +1,139 @@
+{
+  "version": "1.0",
+  "descripcion": "Definiciones y ejemplos de estrategias de resolución de conflictos",
+  
+  "estrategias": [
+    {
+      "nombre": "ultimo",
+      "descripcion": "Usa el valor más reciente según fecha del documento",
+      "uso_recomendado": "Campos que deben reflejar el estado más actual (edad, estado clínico)",
+      "ejemplo": {
+        "valores": [
+          {"valor": 45, "fecha": "2023-01-15", "origen": "doc1.pdf"},
+          {"valor": 46, "fecha": "2023-05-20", "origen": "doc2.pdf"}
+        ],
+        "resultado": 46,
+        "explicacion": "Se seleccionó el valor más reciente (46) de doc2.pdf"
+      }
+    },
+    {
+      "nombre": "primero",
+      "descripcion": "Usa el valor más antiguo según fecha del documento",
+      "uso_recomendado": "Campos históricos o de referencia basal",
+      "ejemplo": {
+        "valores": [
+          {"valor": "Diabetes tipo 2", "fecha": "2022-03-10", "origen": "doc1.pdf"},
+          {"valor": "Diabetes tipo 2, Hipertensión", "fecha": "2023-01-05", "origen": "doc2.pdf"}
+        ],
+        "resultado": "Diabetes tipo 2",
+        "explicacion": "Se seleccionó el diagnóstico inicial de doc1.pdf"
+      }
+    },
+    {
+      "nombre": "todos",
+      "descripcion": "Mantiene todos los valores encontrados como una lista",
+      "uso_recomendado": "Campos que pueden tener múltiples valores válidos (medicamentos, síntomas)",
+      "ejemplo": {
+        "valores": [
+          {"valor": "Dolor de cabeza", "origen": "doc1.pdf"},
+          {"valor": "Mareos", "origen": "doc2.pdf"}
+        ],
+        "resultado": ["Dolor de cabeza", "Mareos"],
+        "explicacion": "Se mantienen ambos síntomas como una lista"
+      }
+    },
+    {
+      "nombre": "promedio",
+      "descripcion": "Calcula el promedio (solo para valores numéricos)",
+      "uso_recomendado": "Mediciones cuantitativas que pueden fluctuar (peso, presión arterial)",
+      "ejemplo": {
+        "valores": [
+          {"valor": 120, "origen": "doc1.pdf"},
+          {"valor": 130, "origen": "doc2.pdf"},
+          {"valor": 125, "origen": "doc3.pdf"}
+        ],
+        "resultado": 125,
+        "explicacion": "Se calculó el promedio de las tres mediciones: (120+130+125)/3 = 125"
+      }
+    },
+    {
+      "nombre": "maximo",
+      "descripcion": "Selecciona el valor máximo (para valores numéricos)",
+      "uso_recomendado": "Cuando interesa el valor más alto (puntuación de riesgo)",
+      "ejemplo": {
+        "valores": [
+          {"valor": 3, "origen": "doc1.pdf"},
+          {"valor": 5, "origen": "doc2.pdf"},
+          {"valor": 2, "origen": "doc3.pdf"}
+        ],
+        "resultado": 5,
+        "explicacion": "Se seleccionó el valor máximo: 5"
+      }
+    },
+    {
+      "nombre": "minimo",
+      "descripcion": "Selecciona el valor mínimo (para valores numéricos)",
+      "uso_recomendado": "Cuando interesa el valor más bajo (función residual)",
+      "ejemplo": {
+        "valores": [
+          {"valor": 30, "origen": "doc1.pdf"},
+          {"valor": 25, "origen": "doc2.pdf"},
+          {"valor": 35, "origen": "doc3.pdf"}
+        ],
+        "resultado": 25,
+        "explicacion": "Se seleccionó el valor mínimo: 25"
+      }
+    },
+    {
+      "nombre": "concatenar",
+      "descripcion": "Combina todos los valores en un texto separado por delimitadores",
+      "uso_recomendado": "Comentarios o notas que deben preservarse completos",
+      "ejemplo": {
+        "valores": [
+          {"valor": "Requiere seguimiento", "origen": "doc1.pdf"},
+          {"valor": "Ajuste de medicación", "origen": "doc2.pdf"}
+        ],
+        "resultado": "Requiere seguimiento | Ajuste de medicación",
+        "explicacion": "Se combinaron ambos comentarios separados por ' | '"
+      }
+    },
+    {
+      "nombre": "prioridad_tipo",
+      "descripcion": "Selecciona según la prioridad del tipo de documento",
+      "uso_recomendado": "Cuando ciertos documentos tienen mayor autoridad",
+      "ejemplo": {
+        "valores": [
+          {"valor": "45 años", "origen": "doc1.pdf", "tipo": "BIO"},
+          {"valor": "46 años", "origen": "doc2.pdf", "tipo": "FARC"}
+        ],
+        "resultado": "46 años",
+        "explicacion": "Se seleccionó el valor del documento FARC por tener mayor prioridad"
+      }
+    },
+    {
+      "nombre": "manual",
+      "descripcion": "Solicita al usuario resolver cada conflicto individualmente",
+      "uso_recomendado": "Datos críticos que requieren verificación humana",
+      "ejemplo": {
+        "valores": [
+          {"valor": "Diabetes tipo 1", "origen": "doc1.pdf"},
+          {"valor": "Diabetes tipo 2", "origen": "doc2.pdf"}
+        ],
+        "resultado": "[Determinado por el usuario]",
+        "explicacion": "El sistema mostrará las opciones y el usuario seleccionará la correcta"
+      }
+    }
+  ],
+  
+  "recomendaciones_por_campo": {
+    "nombre_paciente": "ultimo",
+    "edad": "ultimo",
+    "fecha_nacimiento": "primero",
+    "diagnostico": "ultimo",
+    "historial_medico": "concatenar",
+    "medicamentos": "todos",
+    "alergias": "todos",
+    "resultados_pruebas": "prioridad_tipo",
+    "comentarios": "concatenar"
+  }
+}

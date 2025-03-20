@@ -1,0 +1,157 @@
+campos:
+  '"Select the rating for the Interpersonal Relationship Scale"), default':
+    description: Campo de texto para "Select The Rating For The Interpersonal Relationship
+      Scale"), Default
+    required: false
+    type: string
+  DCF_EVALUATION_CHOICES:
+    description: Campo de texto para Dcf Evaluation Choices
+    required: false
+    type: string
+  PROGRAM_PURPOSE_CHOICES:
+    description: Campo de texto para Program Purpose Choices
+    required: false
+    type: string
+  SCALE_OPTIONS:
+    description: Campo de texto para Scale Options
+    required: false
+    type: string
+  adl_scale:
+    description: Campo de texto para Adl Scale
+    required: false
+    type: string
+  anxiety_scale:
+    description: Campo de texto para Anxiety Scale
+    required: false
+    type: string
+  approval_of_licensed_practitioner:
+    description: Campo de texto para Approval Of Licensed Practitioner
+    required: false
+    type: string
+  care_for_self_scale:
+    description: Campo de texto para Care For Self Scale
+    required: false
+    type: string
+  choices:
+    description: Campo de texto para Choices
+    required: false
+    type: string
+  cognitive_performance_scale:
+    description: Campo de texto para Cognitive Performance Scale
+    required: false
+    type: string
+  danger_to_others_scale:
+    description: Campo de texto para Danger To Others Scale
+    required: false
+    type: string
+  danger_to_self_scale:
+    description: Campo de texto para Danger To Self Scale
+    required: false
+    type: string
+  date_of_approval_of_licensed_practitioner:
+    description: Campo de texto para Date Of Approval Of Licensed Practitioner
+    required: false
+    type: string
+  db_index:
+    description: Campo de texto para Db Index
+    required: false
+    type: string
+  dcf_evaluation:
+    description: Campo de texto para Dcf Evaluation
+    required: false
+    type: string
+  depression_scale:
+    description: Campo de texto para Depression Scale
+    required: false
+    type: string
+  evaluation_date:
+    description: Campo de texto para Evaluation Date
+    required: false
+    type: string
+  family_environment_scale:
+    description: Campo de texto para Family Environment Scale
+    required: false
+    type: string
+  family_relationship_scale:
+    description: Campo de texto para Family Relationship Scale
+    required: false
+    type: string
+  far:
+    description: Campo de texto para Far
+    required: false
+    type: string
+  help_text:
+    description: Campo de texto para Help Text
+    required: false
+    type: string
+  hyper_affect_scale:
+    description: Campo de texto para Hyper Affect Scale
+    required: false
+    type: string
+  interpersonal_relationship_scale:
+    description: Campo de texto para Interpersonal Relationship Scale
+    required: false
+    type: string
+  licensed_practitioner:
+    description: Campo de texto para Licensed Practitioner
+    required: false
+    type: string
+  m_gaf_score:
+    description: Campo de texto para M Gaf Score
+    required: false
+    type: string
+  medical_physical_scale:
+    description: Campo de texto para Medical Physical Scale
+    required: false
+    type: string
+  'null':
+    description: Campo de texto para Null
+    required: false
+    type: string
+  patient:
+    description: Campo de texto para Patient
+    required: false
+    type: string
+  program_purpose:
+    description: Campo de texto para Program Purpose
+    required: false
+    type: string
+  related_name:
+    description: Campo de texto para Related Name
+    required: false
+    type: string
+  security_management_needs:
+    description: Campo de texto para Security Management Needs
+    required: false
+    type: string
+  social_legal_scale:
+    description: Campo de texto para Social Legal Scale
+    required: false
+    type: string
+  substance_abuse_history:
+    description: Campo de texto para Substance Abuse History
+    required: false
+    type: string
+  substance_use_scale:
+    description: Campo de texto para Substance Use Scale
+    required: false
+    type: string
+  thought_process_scale:
+    description: Campo de texto para Thought Process Scale
+    required: false
+    type: string
+  traumatic_stress_scale:
+    description: Campo de texto para Traumatic Stress Scale
+    required: false
+    type: string
+  verbose_name:
+    description: Campo de texto para Verbose Name
+    required: false
+    type: string
+  work_school_scale:
+    description: Campo de texto para Work School Scale
+    required: false
+    type: string
+fecha_generacion: '2025-02-27T16:40:49.296137'
+nombre: Far_Campos
+tipo: import_template

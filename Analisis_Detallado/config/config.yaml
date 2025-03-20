@@ -1,0 +1,24 @@
+paths:
+  analysis_dir: "C:/Users/pepec/Documents/Notefy IA/Data synthetic/Analisis_Detallado"
+  data_dir: "../Data"
+  temp_dir: "temp"
+
+analysis:
+  formats:
+    - json
+    - html
+    - xlsx
+  
+  report_settings:
+    include_samples: true
+    max_sample_rows: 5
+    generate_plots: true
+    
+  validations:
+    check_null_threshold: 0.2
+    check_duplicates: true
+    check_data_types: true
+
+logging:
+  level: INFO
+  file: "analysis.log"

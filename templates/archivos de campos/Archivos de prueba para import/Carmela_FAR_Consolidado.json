@@ -1,0 +1,31 @@
+[
+    {
+        "Patient Social Security": "044647867",
+        "DCF Evaluation": "Intervalo de seis (6) meses después del ingreso",
+        "Evaluation Date": "2025-03-05",
+        "Program Purpose": "Admisión al programa",
+        "M-GAF Score": "75",
+        "Substance Abuse History": 0,
+        "Licensed Practitioner Username": "",
+        "Approval of the Licensed Practitioner": 1,
+        "Approval Date": "2025-03-05",
+        "Depression Scale": "Ningún problema",
+        "Anxiety Scale": "Ningún problema",
+        "Hyper Affect Scale": "Ningún problema",
+        "Thought Process Scale": "Ningún problema",
+        "Cognitive Performance Scale": "Ningún problema",
+        "Medical/Physical Scale": "Ningún problema",
+        "Traumatic Stress Scale": "Ningún problema",
+        "Substance Use Scale": "Ningún problema",
+        "Interpersonal Relationship Scale": "Ningún problema",
+        "Family Relationships Scale": "Ningún problema",
+        "Family Environment Scale": "Ningún problema",
+        "Social-Legal Scale": "Ningún problema",
+        "Work/School Scale": "Ningún problema",
+        "Activities of Daily Living (ADL) Scale": "Ningún problema",
+        "Ability to Care for Self Scale": "Ningún problema",
+        "Danger to Self Scale": "Ningún problema",
+        "Danger to Others Scale": "Ningún problema",
+        "Security Management Needs": "Ningún problema"
+    }
+]

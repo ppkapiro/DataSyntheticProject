@@ -1,0 +1,31 @@
+[
+    {
+        "Patient Social Security": "044647867",
+        "DCF Evaluation": "2",
+        "Evaluation Date": "2025-03-05",
+        "Program Purpose": "1",
+        "M-GAF Score": 75,
+        "Substance Abuse History": 0,
+        "Licensed Practitioner Username": "Dr. John Doe",
+        "Approval of the Licensed Practitioner": 1,
+        "Approval Date": "2025-03-05",
+        "Depression Scale": 4,
+        "Anxiety Scale": 5,
+        "Hyper Affect Scale": 3,
+        "Thought Process Scale": 1,
+        "Cognitive Performance Scale": 1,
+        "Medical/Physical Scale": 1,
+        "Traumatic Stress Scale": 1,
+        "Substance Use Scale": 1,
+        "Interpersonal Relationship Scale": 5,
+        "Family Relationships Scale": 5,
+        "Family Environment Scale": 4,
+        "Social-Legal Scale": 1,
+        "Work/School Scale": 1,
+        "Activities of Daily Living (ADL) Scale": 4,
+        "Ability to Care for Self Scale": 3,
+        "Danger to Self Scale": 1,
+        "Danger to Others Scale": 1,
+        "Security Management Needs": 1
+    }
+]

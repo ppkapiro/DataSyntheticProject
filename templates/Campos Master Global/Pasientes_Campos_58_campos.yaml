@@ -1,0 +1,237 @@
+campos:
+  EDUCATION_LEVEL_CHOICES:
+    description: Campo de texto para Education Level Choices
+    required: false
+    type: string
+  ETHNICITY_CHOICES:
+    description: Campo de texto para Ethnicity Choices
+    required: false
+    type: string
+  GENDER_CHOICES:
+    description: Campo de texto para Gender Choices
+    required: false
+    type: string
+  MARITAL_STATUS_CHOICES:
+    description: Campo de texto para Marital Status Choices
+    required: false
+    type: string
+  RACE_CHOICES:
+    description: Campo de texto para Race Choices
+    required: false
+    type: string
+  RELATIONSHIP_CHOICES:
+    description: Campo de texto para Relationship Choices
+    required: false
+    type: string
+  RegexValidator(regex:
+    description: Campo de texto para Regexvalidator(Regex
+    required: false
+    type: string
+  blank:
+    description: Campo de texto para Blank
+    required: false
+    type: string
+  choices:
+    description: Campo de texto para Choices
+    required: false
+    type: string
+  codes:
+    description: Campo de texto para Codes
+    required: false
+    type: string
+  cohabitation_duration:
+    description: Campo de texto para Cohabitation Duration
+    required: false
+    type: string
+  country_birth:
+    description: Campo de texto para Country Birth
+    required: false
+    type: string
+  date_of_admission:
+    description: Campo de texto para Date Of Admission
+    required: false
+    type: string
+  date_of_birth:
+    description: Campo de texto para Date Of Birth
+    required: false
+    type: string
+  date_of_close:
+    description: Campo de texto para Date Of Close
+    required: false
+    type: string
+  date_of_death:
+    description: Campo de texto para Date Of Death
+    required: false
+    type: string
+  db_index:
+    description: Campo de texto para Db Index
+    required: false
+    type: string
+  default:
+    description: Campo de texto para Default
+    required: false
+    type: string
+  divorce_duration:
+    description: Campo de texto para Divorce Duration
+    required: false
+    type: string
+  education_level_completed:
+    description: Campo de texto para Education Level Completed
+    required: false
+    type: string
+  email_personal:
+    description: Campo de texto para Email Personal
+    required: false
+    type: string
+  emergency_contact_full_name:
+    description: Campo de texto para Emergency Contact Full Name
+    required: false
+    type: string
+  emergency_contact_phone:
+    description: Campo de texto para Emergency Contact Phone
+    required: false
+    type: string
+  ethnicity:
+    description: Campo de texto para Ethnicity
+    required: false
+    type: string
+  first_name:
+    description: Campo de texto para First Name
+    required: false
+    type: string
+  foreign_born_arrival_date:
+    description: Campo de texto para Foreign Born Arrival Date
+    required: false
+    type: string
+  gender:
+    description: Campo de texto para Gender
+    required: false
+    type: string
+  health_insurances:
+    description: Campo de texto para Health Insurances
+    required: false
+    type: string
+  help_text:
+    description: Campo de texto para Help Text
+    required: false
+    type: string
+  languages_can_speak:
+    description: Campo de texto para Languages Can Speak
+    required: false
+    type: string
+  last_name:
+    description: Campo de texto para Last Name
+    required: false
+    type: string
+  legal_guardian_full_name:
+    description: Campo de texto para Legal Guardian Full Name
+    required: false
+    type: string
+  legal_guardian_phone:
+    description: Campo de texto para Legal Guardian Phone
+    required: false
+    type: string
+  marital_status:
+    description: Campo de texto para Marital Status
+    required: false
+    type: string
+  marriage_duration:
+    description: Campo de texto para Marriage Duration
+    required: false
+    type: string
+  max_length:
+    description: Campo de texto para Max Length
+    required: false
+    type: string
+  medications:
+    description: Campo de texto para Medications
+    required: false
+    type: string
+  message:
+    description: Campo de texto para Message
+    required: false
+    type: string
+  mh_case_number:
+    description: Campo de texto para Mh Case Number
+    required: false
+    type: string
+  'null':
+    description: Campo de texto para Null
+    required: false
+    type: string
+  paciente:
+    description: Campo de texto para Paciente
+    required: false
+    type: string
+  phone_personal:
+    description: Campo de texto para Phone Personal
+    required: false
+    type: string
+  photo:
+    description: Campo de texto para Photo
+    required: false
+    type: string
+  postal_address:
+    description: Campo de texto para Postal Address
+    required: false
+    type: string
+  postal_address_emergency_contact:
+    description: Campo de texto para Postal Address Emergency Contact
+    required: false
+    type: string
+  postal_address_legal_guardian:
+    description: Campo de texto para Postal Address Legal Guardian
+    required: false
+    type: string
+  primary_country_raised:
+    description: Campo de texto para Primary Country Raised
+    required: false
+    type: string
+  race:
+    description: Campo de texto para Race
+    required: false
+    type: string
+  related_name:
+    description: Campo de texto para Related Name
+    required: false
+    type: string
+  relationship_with_emergency_contact:
+    description: Campo de texto para Relationship With Emergency Contact
+    required: false
+    type: string
+  relationship_with_legal_guardian:
+    description: Campo de texto para Relationship With Legal Guardian
+    required: false
+    type: string
+  separation_duration:
+    description: Campo de texto para Separation Duration
+    required: false
+    type: string
+  signature:
+    description: Campo de texto para Signature
+    required: false
+    type: string
+  ssn:
+    description: Campo de texto para Ssn
+    required: false
+    type: string
+  str(("Duration of Cohabitation")) + ' (' + str(('mounts')) + ')', null:
+    description: Campo de texto para Str(("Duration Of Cohabitation")) + ' (' + Str(('Mounts'))
+      + ')', Null
+    required: false
+    type: string
+  through:
+    description: Campo de texto para Through
+    required: false
+    type: string
+  verbose_name:
+    description: Campo de texto para Verbose Name
+    required: false
+    type: string
+  widowhood_duration:
+    description: Campo de texto para Widowhood Duration
+    required: false
+    type: string
+fecha_generacion: '2025-02-27T12:26:43.954344'
+nombre: Pasientes_Campos
+tipo: import_template

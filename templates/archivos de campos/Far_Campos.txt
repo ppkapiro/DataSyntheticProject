@@ -1,0 +1,104 @@
+far: class Fars(DateAbstract):
+    patient = models.OneToOneField(Patients, on_delete=models.PROTECT, related_name='far', db_index=True,
+                                   verbose_name=_('Paciente'))
+
+    DCF_EVALUATION_CHOICES = [('1', _("Admission/initiation into episode of care")),
+                              ('2', _("Six (6) month interval after admission")), ('3', _("Discharge from agency")),
+                              ('4', _("Administrative Discharge")),
+                              ('5', _("None of the Above (Program Evaluation Only)")), ]
+    dcf_evaluation = models.CharField(_("DCF Evaluation (Purpose)"), db_index=True, max_length=1,
+                                      choices=DCF_EVALUATION_CHOICES, default='2',
+                                      help_text=_("Select the purpose for the DCF evaluation"))
+
+    evaluation_date = models.DateField(_("Evaluation Date"), db_index=True, default=timezone.now)
+
+    PROGRAM_PURPOSE_CHOICES = [('1', _("Admission to Program")), ('2', _("Six (6) months after admission to program")),
+                               ('3', _("Annually after admission to program or service")),
+                               ('4', _("Planned discharge from/transfer to a program service within agency")),
+                               ('5', _("Administrative discharge")), ('6', _("None of the above")), ]
+    program_purpose = models.CharField(_("Program Evaluation Purpose (Optional)"), db_index=True, max_length=1,
+                                       choices=PROGRAM_PURPOSE_CHOICES, null=True, blank=True, default='1',
+                                       help_text=_("Select the purpose for the program evaluation"))
+
+    m_gaf_score = models.PositiveIntegerField(_('M-GAF Score'), db_index=True, null=True, blank=True)
+
+    substance_abuse_history = models.BooleanField(_('Substance Abuse History'), db_index=True, default=False)
+
+    SCALE_OPTIONS = [('1', _("No Problem")), ('2', _("Less than Slight Problem")), ('3', _("Slight Problem")),
+                     ('4', _("Slight to Moderate Problem")), ('5', _("Moderate Problem")),
+                     ('6', _("Moderate/Severe Problem")), ('7', _("Severe Problem")), ('8', _("Extreme Problem")),
+                     ('9', _("Extreme Problem")), ]
+
+    depression_scale = models.CharField(_("Depression Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                        help_text=_("Select the rating for the Depression Scale"), default='1')
+
+    anxiety_scale = models.CharField(_("Anxiety Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                     help_text=_("Select the rating for the Anxiety Scale"), default='1')
+
+    hyper_affect_scale = models.CharField(_("Hyper Affect Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                          help_text=_("Select the rating for the Hyper Affect Scale"), default='1')
+
+    thought_process_scale = models.CharField(_("Thought Process Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                             db_index=True, default='1',
+                                             help_text=_("Select the rating for the Thought Process Scale"))
+
+    cognitive_performance_scale = models.CharField(_("Cognitive Performance Scale"), max_length=1, default='1',
+                                                   choices=SCALE_OPTIONS, db_index=True, help_text=_(
+            "Select the rating for the Cognitive Performance Scale"))
+
+    medical_physical_scale = models.CharField(_("Medical/Physical Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                              db_index=True, default='1',
+                                              help_text=_("Select the rating for the Medical/Physical Scale"))
+
+    traumatic_stress_scale = models.CharField(_("Traumatic Stress Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                              db_index=True, default='1',
+                                              help_text=_("Select the rating for the Traumatic Stress Scale"))
+
+    substance_use_scale = models.CharField(_("Substance Use Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                           help_text=_("Select the rating for the Substance Use Scale"), default='1')
+
+    interpersonal_relationship_scale = models.CharField(_("Interpersonal Relationship Scale"), max_length=1,
+                                                        choices=SCALE_OPTIONS, db_index=True, help_text=_(
+            "Select the rating for the Interpersonal Relationship Scale"), default='1')
+
+    family_relationship_scale = models.CharField(_("Family Relationships Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                                 db_index=True, default='1',
+                                                 help_text=_("Select the rating for the Family Relationships Scale"))
+
+    family_environment_scale = models.CharField(_("Family Environment Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                                db_index=True, default='1',
+                                                help_text=_("Select the rating for the Family Environment Scale"))
+
+    social_legal_scale = models.CharField(_("Social-Legal Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                          help_text=_("Select the rating for the Social-Legal Scale"), default='1')
+
+    work_school_scale = models.CharField(_("Work/School Scale"), max_length=1, choices=SCALE_OPTIONS, db_index=True,
+                                         help_text=_("Select the rating for the Work/School Scale"), default='1')
+
+    adl_scale = models.CharField(_("Activities of Daily Living (ADL) Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                 db_index=True, default='1',
+                                 help_text=_("Select the rating for the Activities of Daily Living (ADL) Scale"))
+
+    care_for_self_scale = models.CharField(_("Ability to Care for Self Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                           db_index=True, default='1',
+                                           help_text=_("Select the rating for the Ability to Care for Self Scale"))
+
+    danger_to_self_scale = models.CharField(_("Danger to Self Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                            db_index=True, default='1',
+                                            help_text=_("Select the rating for the Danger to Self Scale"))
+
+    danger_to_others_scale = models.CharField(_("Danger to Others Scale"), max_length=1, choices=SCALE_OPTIONS,
+                                              db_index=True, default='1',
+                                              help_text=_("Select the rating for the Danger to Others Scale"))
+
+    security_management_needs = models.CharField(_("Security Management Needs"), max_length=1, choices=SCALE_OPTIONS,
+                                                 db_index=True, default='1',
+                                                 help_text=_("Select the rating for the Security Management Needs"))
+
+    # Aprobación del practicante autorizado
+    licensed_practitioner = models.ForeignKey(LicensedPractitioners, verbose_name=_("Licensed Practitioner"),
+                                              related_name="fars", db_index=True, on_delete=models.PROTECT,
+                                              null=True, blank=True)
+    approval_of_licensed_practitioner = models.BooleanField(_('Aprobación del practicante con licencia'), db_index=True)
+    date_of_approval_of_licensed_practitioner = models.DateField(_('Fecha de aprobación del practicante con licencia'),
+                                                                 db_index=True, null=True, blank=True)

@@ -1,0 +1,329 @@
+Bio: class Assessments(DateAbstract, NoteAbstract):
+    # Basic Assessment Information
+    patient = models.OneToOneField(Patients, on_delete=models.PROTECT, verbose_name=_('Patient'),
+                                   related_name='assessment', db_index=True)
+
+    date = models.DateField(_('Assessment Date'), default=timezone.now, db_index=True)
+    time_start = models.TimeField(_('Start Time'), default=default_time_start, db_index=True)
+    time_end = models.TimeField(_('End Time'), db_index=True, default=default_time_end)
+    setting = models.CharField(_('Setting'), max_length=100, db_index=True, default='53')
+
+    PROGRAM_CHOICES = [('C', _('Program is CMH')), ('P', _('Program is Private'))]
+    program = models.CharField(_('Program'), db_index=True, max_length=1, choices=PROGRAM_CHOICES, default='C')
+
+    TYPE_BYLL_CHOICES = [('B', _('BIO H0031 HM')), ('I', _('IDA H0031 HO')), ('S', _('Is 90791'))]
+    type_bill = models.CharField(_('Select'), db_index=True, max_length=1, choices=TYPE_BYLL_CHOICES, default='B')
+
+    # 1. DEMOGRAFIC DATA
+    referral_source = models.CharField(_('Referral Source'), max_length=500, db_index=True, null=True, blank=True)
+
+    # 2. Client's Presenting Problems
+    presenting_problems = models.TextField(("Client's Presenting Problem(s)"), help_text=(
+        'List specific symptoms, onset history, diagnostic criteria, and justification for treatment recommendations.'))
+
+    assessment_of_situation = models.TextField(("Client's Assessment of Situation"), help_text=(
+        "List how the client's symptoms affect emotional functioning in their own words."))
+
+    family_assessment_situation = models.TextField(_("Family's Assessment of Situation"), null=True, blank=True,
+                                                   help_text=_(
+                                                       "If applicable, list how symptoms affect family members’ "
+                                                       "emotional functioning in their own words"))
+
+    family_emotional_functioning = models.TextField(_("Family's Emotional Functioning"), null=True, blank=True,
+                                                    help_text=_(
+                                                        "Describe any emotional problems, functional difficulties, "
+                                                        "substance abuse, and/or abuse history impacting"
+                                                        "family members."))
+
+    legal_representative_assessment_of_situation = models.TextField(_("Legal Representative's Assessment of Situation"),
+                                                                    null=True, blank=True,
+                                                                    help_text=_("If applicable, in their own words."))
+
+    # 3. Behavioral Health History (Date of Onsent of Mental Illness)
+    problems = models.ManyToManyField(Problems, verbose_name=_("Problems"), blank=True, related_name="assessments",
+                                      through='AssessmentProblems', help_text=_(
+            "Document any serious behavior or physical illness, injures, operations or hospitalizations and indicate "
+            "the year these occurred (give special attention to previous behavioral health treatment and document "
+            "contact information for coordination of care."))
+
+    # 5. Mental Health Status
+    # A. Mental Status Examination
+    APPEARANCE_CHOICES = [('F', 'Fair Hygiene'), ('D', 'Disheveled'), ('C', 'Cleaned'), ('W', 'Well groomed'),
+                          ('B', 'Bizarre')]
+    appearance = models.CharField(_('Appearance'), max_length=1, choices=APPEARANCE_CHOICES, db_index=True, default='C')
+
+    MOTOR_CHOICES = [('N', 'Normal'), ('A', 'Agitated'), ('R', 'Retardation'), ('RS', 'Restless'), ('AK', 'Akathisia'),
+                     ('T', 'Tremor'), ('O', 'Other')]
+    motor = models.CharField(_('Motor Behavior'), max_length=2, choices=MOTOR_CHOICES, db_index=True, default='N')
+
+    SPEECH_CHOICES = [('N', 'Normal'), ('L', 'Loud'), ('P', 'Pressured'), ('I', 'Impoverished'), ('S', 'Slurred')]
+    speech = models.CharField(_('Speech Behavior'), max_length=2, choices=SPEECH_CHOICES, db_index=True, default='N')
+
+    AFFECT_CHOICES = [('A', _("Appropriate")), ('F', _("Flat")), ('L', _("Labile")), ('T', _("Tearful")),
+                      ('E', _("Expansive")), ('X', _("Anxious")), ('B', _("Blunted")), ('G', _("Angry")),
+                      ('C', _("Constricted")), ('O', _("Other"))]
+    affect = MultiSelectField(_("Affect"), choices=AFFECT_CHOICES, max_length=19, db_index=True, default='O')
+
+    THOUGHT_PROCESS_CHOICES = [('OG', _("Organized")), ('S', _("Obsessive")), ('F', _("Fight of Ideas")),
+                               ('D', _("Disorganized")), ('T', _("Tangential")), ('L', _("Loose Associations")),
+                               ('G', _("Goal Directed")), ('C', _("Circumstantial")), ('O', _("Other")),
+                               ('I', _("Irrational")), ('PE', _("Preoccupied")), ('RG', _("Rigid")),
+                               ('BG', _("Blocking"))]
+    thought_process = MultiSelectField(_('Thought Process'), choices=THOUGHT_PROCESS_CHOICES, max_length=31,
+                                       db_index=True, default='O')
+
+    MOOD_CHOICES = [('E', _("Euthymic")), ('D', _("Depressed")), ('A', _("Anxious")), ('EF', _("Euphoric")),
+                    ('AG', _("Angry")), ('M', _("Manic")), ('O', _("Other"))]
+    mood = MultiSelectField(_('Mood'), max_length=15, choices=MOOD_CHOICES, db_index=True, default='O')
+
+    JUDGMENT_OR_INSIGHT_CHOICES = [('G', _("Good")), ('F', _("Fair")), ('P', _("Poor")), ('O', _("Other"))]
+    judgment = models.CharField(_('Judgment'), max_length=1, choices=JUDGMENT_OR_INSIGHT_CHOICES, db_index=True,
+                                default='G')
+    insight = models.CharField(_('Insight'), max_length=1, choices=JUDGMENT_OR_INSIGHT_CHOICES, db_index=True,
+                               default='G')
+
+    THOUGHT_CONTENT_CHOICES = [('R', _("Relevant")), ('B', _("Reality Based")),
+                               ('H', _("Has Hallucinations")), ('D', _("Has Delusions"))]
+    thought_content = MultiSelectField(_('Thought Content'), max_length=7, blank=True, db_index=True, default='R',
+                                       choices=THOUGHT_CONTENT_CHOICES)
+    type_hallucination = models.CharField(_('Type of Hallucination'), null=True, blank=True, max_length=500)
+    type_delusion = models.CharField(_('Type of Delusion'), null=True, blank=True, max_length=500)
+
+    ORIENTED_CHOICES = [('T', _("Time")), ('C', _("Place")), ('P', _("Person")), ('L', _("Location"))]
+    oriented = MultiSelectField(_('Oriented'), db_index=True, max_length=7, choices=ORIENTED_CHOICES,
+                                default=['T', 'C', 'P', 'L'])
+
+    RISK_CHOICES = [('L', _("Low")), ('M', _("Medium")), ('H', _("High")), ('C', _("Chronic"))]
+    risk_to_self = models.CharField(_('Risk to Self'), max_length=1, db_index=True, choices=RISK_CHOICES, default='L')
+    risk_to_others = models.CharField(_('Risk to Others'), max_length=1, db_index=True, choices=RISK_CHOICES,
+                                      default='L')
+    safety_plan_reviewed = models.BooleanField(_('Safety Plan Reviewed'), db_index=True, default=False)
+
+    comments = models.TextField(_('Comments'), null=True, blank=True, db_index=True)
+
+    # B. Suicidal/homicide Risk mini screening
+    denied_any_current_suicidal = models.BooleanField(_('Client denied any current suicidal/homicidal ideations'),
+                                                      default=True)
+    thought_killing_self_others = models.BooleanField(_("Have you ever thought about killing yourself or others?"),
+                                                      default=None, db_index=True, null=True, blank=True)
+    thought_killing_self_others_explanation = models.TextField(_("Thought killing self others explanation"),
+                                                               null=True, blank=True,
+                                                               help_text=_("Explanation required if answer is Yes."))
+
+    owns_weapon = models.BooleanField(_("Do you own a weapon?"), default=None, db_index=True, null=True, blank=True)
+    owns_weapon_explanation = models.TextField(_("Owns weapon explanation"), blank=True, null=True,
+                                               help_text=_("Explanation required if answer is Yes."))
+
+    has_plan_or_access = models.BooleanField(_("Does Client have a plan or access to a plan or individual?"),
+                                             default=None, db_index=True, null=True, blank=True)
+
+    hospitalized_for_depression = models.BooleanField(_("Have you ever been hospitalized for depressive symptoms?"),
+                                                      default=None, db_index=True, null=True, blank=True)
+    hospitalization_explanation = models.TextField(_("Hospitalization detail"), blank=True, null=True,
+                                                   help_text=_("Explanation required if answer is Yes."))
+
+    behavioral_health_service_last_2_years = models.BooleanField(
+        _("Has the client received behavioral health service in the last 2 years due to suicide?"), default=None,
+        db_index=True, null=True, blank=True)
+
+    behavioral_explanation = models.TextField(_("Behavioral explanation"), blank=True, null=True)
+
+    # C. Physical/Sexual/Emotional Abuse
+    abuse_history_denied = models.BooleanField(
+        _("Client and/or family denied any abuse or trauma history (physical, sexual, emotional, or financial abuse)"),
+        db_index=True, default=True)
+
+    date_of_abuse = models.DateField(_("Date of Abuse"), null=True, db_index=True, blank=True,
+                                     help_text=_("Approximate date of the abuse incident."))
+
+    report_date = models.DateField(_("Approximate Date Report was Filed"), null=True, blank=True, db_index=True,
+                                   help_text=_("Date when the abuse report was approximately filed."))
+    location_of_incident = models.CharField(_("Where"), max_length=255, blank=True, null=True, db_index=True,
+                                            help_text=_("Location where the abuse incident occurred."))
+
+    incident_details = models.TextField(_("Details of the Incident"), null=True, blank=True,
+                                        help_text=_("Detailed description of the abuse incident."))
+
+    abuse_report_outcome = models.TextField(_("Outcome of the Abuse Report"), null=True, blank=True,
+                                            help_text=_("Outcome or follow-up details of the abuse report."))
+
+    referral_assessment = models.BooleanField(_('A referral for assessment/services is indicated'), default=None,
+                                              db_index=None, null=True, blank=True)
+    date_referral_assessment = models.DateField(_('Date of referral assessment'), db_index=True, null=True, blank=True)
+    location_referral_assessment = models.CharField(_('Location of referral assessment'), max_length=255, db_index=True,
+                                                    null=True, blank=True)
+
+    information_coordination = models.BooleanField(_('Obtain release of information for coordination of care'),
+                                                   default=None, db_index=True, null=True, blank=True)
+
+    records_treatment = models.BooleanField(_('Where records of previous treatments requested?'), default=None,
+                                            db_index=True, null=True, blank=True)
+
+    date_records_treatment = models.DateField(_('Fecha de los registros solicitados'), db_index=True, null=True,
+                                              blank=True)
+    location_records_treatment = models.CharField(_('Lugar donde se solicitan los registros de tratamientos'),
+                                                  max_length=255, db_index=True, null=True, blank=True)
+
+    # 6. Physical Health Assessment
+    visited_physician_last_2_years = models.BooleanField(_("Has the client visited a physician in the last two years?"),
+                                                         db_index=True, default=False)
+
+    physician_visit_reason = models.TextField(_("Reason for Visit"), null=True, blank=True,
+                                              help_text=_("Reason for the physician visit if 'Yes'"))
+    physician_visit_date = models.DateField(_("Date of Visit"), null=True, blank=True, db_index=True,
+                                            help_text=_("Date of the physician visit if 'Yes'"))
+    primary_care_physician = models.ForeignKey(PrimaryCarePhysicians, verbose_name=_("Primary Care Physician"),
+                                               null=True, blank=True, db_index=True, on_delete=models.PROTECT)
+
+    experiences_pain = models.BooleanField(_("Does the client experience any pain?"), default=False, db_index=True)
+    pain_location = models.CharField(_("Pain Location"), null=True, blank=True, max_length=255, db_index=True,
+                                     help_text=_("Specify pain location if the client experiences pain."))
+
+    pain_duration_frequency = models.TextField(("Pain Duration and Frequency"), null=True, blank=True, help_text=(
+        "Specify how long and frequency of pain if the client experiences pain."))
+    pain_severity_rating = models.PositiveSmallIntegerField(_("Pain Severity (1 to 10)"), null=True, db_index=True,
+                                                            blank=True,
+                                                            help_text=_("Rate pain from 1 to 10 (intense pain)"),
+                                                            validators=[MinValueValidator(1), MaxValueValidator(10)])
+    treated_for_pain = models.BooleanField(_("Has the client been treated for pain?"), null=True, blank=True,
+                                           db_index=True, default=None)
+    pain_treatment_services = models.TextField(_("Pain Treatment Services"), blank=True, null=True,
+                                               help_text=_("List services the client is receiving for pain if any."))
+
+    referral_to_physician_or_specialist = models.ForeignKey(PrimaryCarePhysicians, related_name='referral_assessments',
+                                                            verbose_name=_("Referral to Physician/Specialist"),
+                                                            null=True, blank=True, db_index=True,
+                                                            on_delete=models.PROTECT, help_text=_(
+            "Describe referral if client is not currently receiving treatment for pain."))
+    referral_location = models.CharField(_("Location of Referral"), max_length=255, blank=True, null=True,
+                                         db_index=True,
+                                         help_text=_("Location where referral was provided, if applicable."))
+    release_information = models.BooleanField(_('Obtain release of information so care can be coordinated'),
+                                              default=None, db_index=True, blank=True, null=True)
+
+    # A. Nutritional Risk Assessment
+    illness_affecting_food = models.BooleanField(
+        _("Has an illness or condition that changed the kind and/or amount of food eaten?"), default=False,
+        db_index=True)
+    fewer_than_two_meals = models.BooleanField(_("Eats fewer than 2 meals per day?"), default=False, db_index=True)
+    few_fruits_vegetables_milk = models.BooleanField(_("Eats few fruits, vegetables or milk products"), default=False,
+                                                     db_index=True)
+    frequent_alcohol_consumption = models.BooleanField(
+        _("Has 3 or more drinks of beer, liquor or wine almost every day."), default=False, db_index=True)
+    tooth_or_mouth_problems = models.BooleanField(_("Has tooth or mouth problems that make it hard to eat."),
+                                                  default=False, db_index=True)
+    insufficient_money_for_food = models.BooleanField(_("Does not always have enough money to buy the food needed"),
+                                                      default=False, db_index=True)
+    eats_alone = models.BooleanField(_("Eats alone most of the time"), default=False, db_index=True)
+    multiple_medications_daily = models.BooleanField(
+        _("Takes 3 or more different prescribed or over-the-counter drugs a day."), default=False, db_index=True)
+    unintentional_weight_change = models.BooleanField(
+        _("Without wanting to, has lost or gained 10 pounds in the last 6 months."), default=False, db_index=True)
+    difficulty_self_care_food = models.BooleanField(_("Not always physically able to shop, cook and/or feed self."),
+                                                    default=False, db_index=True)
+    referred_nutritional_score = models.CharField(_("Derived from malnutrition"), max_length=100, db_index=True,
+                                                  null=True, blank=True)
+    date_referred_nutritional_score = models.DateField(_("Date of Derived from malnutrition"), null=True, blank=True,
+                                                       db_index=True)
+
+    nutritional_score = models.PositiveSmallIntegerField(_("Nutritional Score"), db_index=True, default=0,
+                                                         validators=[MinValueValidator(0), MaxValueValidator(10)])
+    NUTRITIONAL_SCORE_CHOICES = [('G', _('Good')), ('R', _('Moderate Risk')), ('H', _('High Risk'))]
+    nutritional_score_choices = models.CharField(_("Nutritional Score Choices"), max_length=1, db_index=True,
+                                                 choices=NUTRITIONAL_SCORE_CHOICES, default='G')
+    APPETITE_CHOICES = [('D', _('Diminished')), ('I', _('Increased')), ('W', _('WNL')), ('A', _('Anorexia'))]
+    appetite = models.CharField(_("Appetite"), max_length=1, default='W', db_index=True, choices=APPETITE_CHOICES)
+
+    HYDRATION_CHOICES = [('D', _('Diminished')), ('I', _('Increased Fluids')), ('W', _('WNL')), ('Q', _('INADEQUATE')),
+                         ('F', _('Restrict Fluids'))]
+    hydration = models.CharField(_("Hydration"), max_length=1, db_index=True, choices=HYDRATION_CHOICES, default='W')
+
+    RECENT_WEIGHT_CHANGE_CHOICES = [('I', _('Intended')), ('U', _('Unintended')), ('G', _('Gained')), ('L', _('Lost')),
+                                    ('N', _('N/A'))]
+    recent_weight_change = models.CharField(_("Recent Weight Change"), max_length=1, null=True, blank=True,
+                                            db_index=True, default='N', choices=RECENT_WEIGHT_CHANGE_CHOICES)
+
+    # 7. History
+    substance_abuse = models.TextField(('Substance Abuse'), null=True, blank=True, help_text=(
+        "For client and family members, list types of substances, duration of use and any treatment received"))
+
+    legal_history = models.TextField(_('Legal History'), null=True, blank=True,
+                                     help_text=_("Specifying changes, date, convictions and incarcerations"))
+    personal_and_family_psychiatric_history = models.TextField(_('Personal and family psychiatric history'), null=True,
+                                                               blank=True, help_text=_(
+            "For client and family members, list types of diagnoses, type of services, duration of use and any "
+            "treatment received"))
+
+    does_client_requiere_referral = models.BooleanField(_('Does client requiere a referral?'), default=False,
+                                                        db_index=True)
+    location_reference = models.CharField(_("Location Reference"), max_length=255, db_index=True, null=True, blank=True)
+    information_coordinated = models.BooleanField(_('Obtain release of information so care can be coordinated'),
+                                                  default=False, db_index=True)
+    # 8. Background, Social and Educational
+    childhood_adolescence_description = models.TextField(_("General Description of Childhood/Adolescence"))
+
+    adult_experience = models.TextField(
+        _("Adult and Current Experience (include work history, leisure activities, and interests)"), null=True,
+        blank=True)
+    spiritual_beliefs = models.TextField(_("What is the client's/family beliefs and important spiritual practices?"),
+                                         help_text=_(
+                                             "Include how these beliefs assist client in dealing with stressor"))
+
+    # 9. Family Experience
+    relationship_family_friends_romantic = models.TextField(
+        _("Relationship with Family, Friends, and Romantic Interests"))
+
+    sexually_active = models.BooleanField(_('If sexually active?'), null=True, blank=True, db_index=True, default=False)
+
+    sexually_active_risk = models.BooleanField(_('Is Client aware of risk regarding Sexual Transmitted Diseases?'),
+                                               null=True, blank=True, db_index=True, default=None)
+
+    # 10. Education Assessment
+    religious_cultural_practice_hindrance = models.BooleanField(
+        _("Do you have any religious/cultural practice that may hinder your educational goals?"), default=False,
+        db_index=True)
+    sensory_impairment_affecting_learning = models.BooleanField(
+        _("Do you have any visual, hearing or other sensory impairment that may affect your ability to learn?"),
+        default=False, db_index=True)
+    physical_limitations_hindering_learning = models.BooleanField(
+        _("Do you have any physical limitations that may hinder your ability to learn?"), default=False, db_index=True)
+    can_follow_understand_directions = models.BooleanField(
+        _("Can client follow/understand directions (ask client to print name and sign on Treatment Plan)?"),
+        default=False, db_index=True)
+
+    # 11. Provide Integrated Summary Below
+    provide_integrated_summary_below = models.TextField(_('Provide Integrated Summary Below'))
+
+    # 12. Treatment Needs
+    treatment_needs = models.TextField(("Treatment Needs"), help_text=("Use client's own words"))
+
+    # 13. Diagnostic Impression
+    treatment_recommendations = models.TextField(_("Treatment recommendations"))
+
+    # Aprobación del practicante autorizado
+    licensed_practitioner = models.ForeignKey(LicensedPractitioners, verbose_name=_("Licensed Practitioner"),
+                                              related_name="assessments", db_index=True, on_delete=models.PROTECT,
+                                              null=True, blank=True)
+    approval_of_licensed_practitioner = models.BooleanField(_('Aprobación del practicante con licencia'), db_index=True)
+    date_of_approval_of_licensed_practitioner = models.DateField(_('Fecha de aprobación del practicante con licencia'),
+                                                                 db_index=True, null=True, blank=True)
+    concur_diagnosis = models.BooleanField(_('I concur with the diagnosis and treatment recommendations'),
+                                           db_index=True, null=True, blank=True)
+    alternative_diagnosis = models.TextField(_('Alternative Diagnosis and/or recommendations'), null=True, blank=True)
+
+    # Aprobación del practicante no autorizado
+    unlicensed_practitioner = models.ForeignKey(UnlicensedTherapists, verbose_name=_("Unlicensed Therapists"),
+                                                related_name="assessments", db_index=True, on_delete=models.PROTECT,
+                                                null=True, blank=True)
+    approval_of_unlicensed_practitioner = models.BooleanField(_('Aprobación del practicante sin licencia'),
+                                                              db_index=True)
+    date_of_approval_of_unlicensed_practitioner = models.DateField(
+        _('Fecha de aprobación del practicante sin licencia'), db_index=True, null=True, blank=True)
+
+    # Aprobación del supervisor
+    clinical_supervisor = models.ForeignKey(ClinicalSupervisors, verbose_name=_("Clinical Supervisor"),
+                                            related_name="assessments", db_index=True, on_delete=models.PROTECT,
+                                            null=True, blank=True)
+    approval_of_clinical_supervisor = models.BooleanField(_('Aprobación del supervisor de la clínica'), db_index=True)
+    date_of_approval_of_clinical_supervisor = models.DateField(_('Fecha de aprobación del supervisor de la clínica'),
+                                                               db_index=True, null=True, blank=True)

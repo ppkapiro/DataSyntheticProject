@@ -1,0 +1,21 @@
+pdf_extraction:
+  pdfminer:
+    line_margin: 0.1
+    char_margin: 0.2
+    word_margin: 0.1
+    boxes_flow: 0.7
+    detect_vertical: true
+    
+  ocr:
+    languages: ['spa', 'eng']
+    psm_mode: 1
+    optimize_contrast: true
+    
+  quality_thresholds:
+    min_acceptable: 60
+    recommend_ai: 80
+    
+  ai_services:
+    enabled: false
+    preferred: 'google_vision'
+    alternatives: ['azure_vision', 'amazon_textract']

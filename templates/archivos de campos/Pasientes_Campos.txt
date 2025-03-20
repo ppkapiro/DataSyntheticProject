@@ -1,0 +1,167 @@
+paciente: class Patients(DateAbstract, NoteAbstract):
+    first_name = models.CharField(_("Nombre del Paciente"), max_length=50, db_index=True, validators=[
+        RegexValidator(regex=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\'-]{2,}$',
+                       message=_("Solo se permiten letras, guiones y apóstrofes, mínimo 2 caracteres."))])
+    last_name = models.CharField(_("Apellidos  del Paciente"), max_length=50, db_index=True, validators=[
+        RegexValidator(regex=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\'-]{2,}$',
+                       message=_("Solo se permiten letras, guiones y apóstrofes, mínimo 2 caracteres."))])
+
+    # Género
+    GENDER_CHOICES = [('M', _("Masculino")), ('F', _("Femenino"))]
+    gender = models.CharField(_("Género del Paciente"), max_length=1, choices=GENDER_CHOICES, db_index=True)
+
+    # Información de contacto del paciente
+    phone_personal = PhoneNumberField(_('Número de Teléfono Personal del Paciente'), unique=True, db_index=True,
+                                      null=True, blank=True)
+    email_personal = models.EmailField(_('Correo Electrónico Personal del Paciente'), unique=True, db_index=True,
+                                       null=True, blank=True)
+
+    postal_address = models.CharField(_("Dirección postal actual del paciente"), db_index=True, null=True, blank=True,
+                                      max_length=500)
+
+    # Información del guardián legal
+    legal_guardian_full_name = models.CharField(_("Nombre Completo del Guardián Legal del Paciente"), max_length=100,
+                                                db_index=True, null=True, blank=True)
+    legal_guardian_phone = PhoneNumberField(_("Teléfono Personal del Guardián Legal del Paciente"), db_index=True,
+                                            null=True, blank=True)
+    RELATIONSHIP_CHOICES = [
+        # Familiares cercanos
+        ("F", _("Padre")),
+        ("M", _("Madre")),
+        ("S", _("Hijo")),
+        ("D", _("Hija")),
+        ("B", _("Hermano")),
+        ("SI", _("Hermana")),
+
+        # Familiares extendidos
+        ("U", _("Tío")),
+        ("A", _("Tía")),
+        ("GF", _("Abuelo")),
+        ("GM", _("Abuela")),
+        ("C", _("Primo")),
+        ("P", _("Prima")),
+        ("N", _("Sobrino")),
+        ("NA", _("Sobrina")),
+        ("CU", _("Cuñado")),
+        ("CUA", _("Cuñada")),
+        ("H", _("Esposo")),
+        ("E", _("Esposa")),
+        ("SUE", _("Suegro")),
+        ("SUA", _("Suegra")),
+
+        # Familiares lejanos y otros
+        ("BC", _("Bisabuelo")),
+        ("BM", _("Bisabuela")),
+        ("T", _("Tatarabuelo")),
+        ("TA", _("Tatarabuela")),
+        ("BN", _("Bisnieto")),
+        ("BNA", _("Bisnieta")),
+        ("PR", _("Primo segundo")),
+        ("PA", _("Prima segunda")),
+
+        # Relaciones no familiares
+        ("AM", _("Amigo")),
+        ("AC", _("Conocido")),
+        ("CA", _("Compañero de trabajo")),
+        ("JE", _("Jefe")),
+        ("VE", _("Vecino")),
+        ("PE", _("Pareja")),
+        ("EX", _("Expareja")),
+        ("PRT", _("Profesor")),
+        ("AL", _("Alumno")),
+        ("ME", _("Mentor")),
+        ("TE", _("Terapista")),
+
+        # Otras relaciones generales
+        ("O", _("Otro")),
+    ]
+
+    relationship_with_legal_guardian = models.CharField(_("Relación del Guardián Legal con el Paciente"), max_length=3,
+                                                        blank=True, choices=RELATIONSHIP_CHOICES, db_index=True,
+                                                        null=True)
+    postal_address_legal_guardian = models.CharField(_("Dirección postal actual del legal guardian"), db_index=True,
+                                                     null=True, blank=True, max_length=500)
+
+    # Información adicional
+    country_birth = CountryField(_('País de Nacimiento del Paciente'), db_index=True, default='CU')
+
+    RACE_CHOICES = [('C', _('Caucásico')), ('B', _('Negro/Afrodescendiente')), ('A', _('Asiático')),
+                    ('NA', _('Indígena Americano')), ('PI', _('Isleño del Pacífico/Aborigen de Oceanía')),
+                    ('M', _('Multirracial')), ('ME', _('Medio Oriente')), ('H', _('Hispano')),
+                    ('IS', _('Subcontinente Indio')), ('O', _('Otro'))]
+    race = models.CharField(_('Raza del Paciente'), max_length=2, choices=RACE_CHOICES, db_index=True, default='H')
+
+    ETHNICITY_CHOICES = [('HL', _('Hispano/Latino')), ('A', _('Árabe')), ('J', _('Judío')), ('R', _('Gitano/Roma')),
+                         ('E', _('Europeo')), ('A', _('Africano')), ('EA', _('Asiático del Este')),
+                         ('SA', _('Asiático del Sur')), ('I', _('Indígena')), ('O', _('Otro'))]
+    ethnicity = models.CharField(_('Etnia del Paciente'), max_length=2, choices=ETHNICITY_CHOICES, db_index=True,
+                                 default='HL')
+
+    # Idiomas
+    languages_can_speak = models.ManyToManyField(LanguagesPatientCanSpeak,
+                                                 verbose_name=_('Idiomas Proficientes del Paciente'),
+                                                 related_name='patients', through='PatientLanguage')
+
+    # Información de Contacto de Emergencia
+    emergency_contact_full_name = models.CharField(_('Contacto de Emergencia del Paciente'), max_length=100, blank=True,
+                                                   null=True, db_index=True)
+    relationship_with_emergency_contact = models.CharField(_('Relación del Contacto de Emergencia con el paciente'),
+                                                           max_length=3, db_index=True, blank=True, null=True,
+                                                           choices=RELATIONSHIP_CHOICES)
+    emergency_contact_phone = PhoneNumberField(_('Teléfono del Contacto de Emergencia'), blank=True, null=True,
+                                               db_index=True)
+    postal_address_emergency_contact = models.CharField(_("Dirección postal actual del contacto de emergencia"),
+                                                        db_index=True, null=True, blank=True, max_length=500)
+
+    # Fechas importantes
+    date_of_admission = models.DateField(_("Fecha de Admisión del Paciente"), default=timezone.now, db_index=True,
+                                         help_text=_("No puede ser una fecha futura"))
+    date_of_close = models.DateField(_("Fecha en que el caso del paciente fue cerrado o se cerrara"), db_index=True,
+                                     blank=True, null=True)
+    date_of_birth = models.DateField(_("Fecha de Nacimiento del Paciente"), db_index=True,
+                                     help_text=_("Debe tener al menos 18 años de edad."))
+    date_of_death = models.DateField(_("Fecha de muerte del Paciente"), db_index=True, null=True, blank=True)
+    # Información de identificación
+    mh_case_number = models.CharField(_("Número de Caso MH del Paciente"), max_length=18, unique=True, db_index=True,
+                                      help_text=_("Autogenerado en formato MH-YYYY-XXXXXXXX."))
+
+    ssn = models.CharField(_("Número de Seguro Social del Paciente"), max_length=500, db_index=True, unique=True,
+                           help_text=_("Solo números"))
+
+    # Fotos
+    photo = models.ImageField(_("Foto de perfil del Paciente"), upload_to=directory_profile_photos, null=True,
+                              blank=True)
+    signature = JSignatureField(_("Firma del paciente"), null=True, blank=True)
+
+    foreign_born_arrival_date = models.DateField(_("Patient's date of arrival in the US"), null=True, blank=True,
+                                                 db_index=True)
+    primary_country_raised = CountryField(_("Primary location where client was raised"), db_index=True, default='CU')
+
+    EDUCATION_LEVEL_CHOICES = [("N", _("Ninguno")), ("P", _("Primaria")), ("S", _("Secundaria")),
+                               ("H", _("Preparatoria/Bachillerato")), ("T", _("Técnico")),
+                               ("A", _("Asociado (Carrera técnica)")), ("B", _("Licenciatura")), ("M", _("Maestría")),
+                               ("D", _("Doctorado")), ("P", _("Postdoctorado")), ]
+    education_level_completed = models.CharField(_("Patient's highest level of education completed"), max_length=1,
+                                                 db_index=True, choices=EDUCATION_LEVEL_CHOICES)
+    MARITAL_STATUS_CHOICES = [('S', _("Single")), ('C', _("Cohabitating")), ('M', _("Married")), ('T', _("Separated")),
+                              ('D', _("Divorced")), ('W', _("Widowed"))]
+    marital_status = models.CharField(_("Marital Status of the patient"), db_index=True, max_length=1,
+                                      choices=MARITAL_STATUS_CHOICES)
+    marriage_duration = models.PositiveIntegerField(str(("Duration of Marriage")) + ' (' + str(('mounts')) + ')',
+                                                    null=True, blank=True, db_index=True)
+    cohabitation_duration = models.PositiveIntegerField(
+        str(("Duration of Cohabitation")) + ' (' + str(('mounts')) + ')', null=True, blank=True, db_index=True)
+
+    separation_duration = models.PositiveIntegerField(str(("Duration of Separation")) + ' (' + str(('mounts')) + ')',
+                                                      null=True, blank=True, db_index=True)
+    divorce_duration = models.PositiveIntegerField(str(("Duration of Divorce")) + ' (' + str(('mounts')) + ')',
+                                                   null=True, blank=True, db_index=True)
+    widowhood_duration = models.PositiveIntegerField(str(("Duration of Widowhood")) + ' (' + str(('mounts')) + ')',
+                                                     null=True, blank=True, db_index=True)
+
+    health_insurances = models.ManyToManyField(HealthInsurances, verbose_name=_('Seguros de salud'),
+                                               related_name='patients', through='PatientHealthInsurance')
+    codes = models.ManyToManyField(Codes, verbose_name=_("Codes"), blank=True, related_name="patients",
+                                   through="PatientCode")
+    medications = models.ManyToManyField(Medications, verbose_name=_("Medications"), blank=True,
+                                         related_name="patients", through="PatientMedication")

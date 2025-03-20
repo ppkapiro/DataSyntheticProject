@@ -1,0 +1,30 @@
+{
+  "facilitador": "Nuvia Estevez",
+  "turno": "manana",
+  "pacientes": [
+    {
+      "id": "1",
+      "nombre": "LORENZA GONZALEZ"
+    },
+    {
+      "id": "2",
+      "nombre": "JUAN MARTINEZ ESTEVEZ"
+    },
+    {
+      "id": "3",
+      "nombre": "ORLANDO VILLALOBOS"
+    },
+    {
+      "id": "4",
+      "nombre": "BARBARA FERNANDEZ"
+    },
+    {
+      "id": "5",
+      "nombre": "Eduardo Esquivel"
+    },
+    {
+      "id": "6",
+      "nombre": "Librada Gomez Rivero"
+    }
+  ]
+}

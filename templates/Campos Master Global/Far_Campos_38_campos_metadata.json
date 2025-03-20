@@ -1,0 +1,260 @@
+{
+  "nombre_archivo": "Far_Campos_38_campos",
+  "tipo_documento": "import_template",
+  "fecha_generacion": "2025-02-27T16:40:49.296137",
+  "num_campos": 38,
+  "campos": [
+    "far",
+    "patient",
+    "verbose_name",
+    "DCF_EVALUATION_CHOICES",
+    "dcf_evaluation",
+    "choices",
+    "help_text",
+    "evaluation_date",
+    "PROGRAM_PURPOSE_CHOICES",
+    "program_purpose",
+    "m_gaf_score",
+    "substance_abuse_history",
+    "SCALE_OPTIONS",
+    "depression_scale",
+    "anxiety_scale",
+    "hyper_affect_scale",
+    "thought_process_scale",
+    "db_index",
+    "cognitive_performance_scale",
+    "medical_physical_scale",
+    "traumatic_stress_scale",
+    "substance_use_scale",
+    "interpersonal_relationship_scale",
+    "\"Select the rating for the Interpersonal Relationship Scale\"), default",
+    "family_relationship_scale",
+    "family_environment_scale",
+    "social_legal_scale",
+    "work_school_scale",
+    "adl_scale",
+    "care_for_self_scale",
+    "danger_to_self_scale",
+    "danger_to_others_scale",
+    "security_management_needs",
+    "licensed_practitioner",
+    "related_name",
+    "null",
+    "approval_of_licensed_practitioner",
+    "date_of_approval_of_licensed_practitioner"
+  ],
+  "calidad_extraccion": 0,
+  "metodo_analisis": "desconocido",
+  "indices_busqueda": {
+    "por_tipo": {
+      "string": [
+        "nombre",
+        "tipo",
+        "campos"
+      ],
+      "relation": [],
+      "date": [
+        "fecha_generacion"
+      ]
+    },
+    "requeridos": {
+      "nombre": "Far_Campos",
+      "tipo": "import_template",
+      "fecha_generacion": "2025-02-27T16:40:49.296137",
+      "campos": {
+        "far": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Far"
+        },
+        "patient": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Patient"
+        },
+        "verbose_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Verbose Name"
+        },
+        "DCF_EVALUATION_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Dcf Evaluation Choices"
+        },
+        "dcf_evaluation": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Dcf Evaluation"
+        },
+        "choices": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Choices"
+        },
+        "help_text": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Help Text"
+        },
+        "evaluation_date": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Evaluation Date"
+        },
+        "PROGRAM_PURPOSE_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Program Purpose Choices"
+        },
+        "program_purpose": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Program Purpose"
+        },
+        "m_gaf_score": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para M Gaf Score"
+        },
+        "substance_abuse_history": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Substance Abuse History"
+        },
+        "SCALE_OPTIONS": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Scale Options"
+        },
+        "depression_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Depression Scale"
+        },
+        "anxiety_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Anxiety Scale"
+        },
+        "hyper_affect_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Hyper Affect Scale"
+        },
+        "thought_process_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Thought Process Scale"
+        },
+        "db_index": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Db Index"
+        },
+        "cognitive_performance_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Cognitive Performance Scale"
+        },
+        "medical_physical_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Medical Physical Scale"
+        },
+        "traumatic_stress_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Traumatic Stress Scale"
+        },
+        "substance_use_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Substance Use Scale"
+        },
+        "interpersonal_relationship_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Interpersonal Relationship Scale"
+        },
+        "\"Select the rating for the Interpersonal Relationship Scale\"), default": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para \"Select The Rating For The Interpersonal Relationship Scale\"), Default"
+        },
+        "family_relationship_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Family Relationship Scale"
+        },
+        "family_environment_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Family Environment Scale"
+        },
+        "social_legal_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Social Legal Scale"
+        },
+        "work_school_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Work School Scale"
+        },
+        "adl_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Adl Scale"
+        },
+        "care_for_self_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Care For Self Scale"
+        },
+        "danger_to_self_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Danger To Self Scale"
+        },
+        "danger_to_others_scale": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Danger To Others Scale"
+        },
+        "security_management_needs": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Security Management Needs"
+        },
+        "licensed_practitioner": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Licensed Practitioner"
+        },
+        "related_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Related Name"
+        },
+        "null": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Null"
+        },
+        "approval_of_licensed_practitioner": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Approval Of Licensed Practitioner"
+        },
+        "date_of_approval_of_licensed_practitioner": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Date Of Approval Of Licensed Practitioner"
+        }
+      }
+    },
+    "opcionales": [],
+    "con_validacion": []
+  }
+}

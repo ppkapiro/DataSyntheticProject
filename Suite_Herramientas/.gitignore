@@ -1,0 +1,8 @@
+# Credenciales y secretos
+config/.env
+*.json
+!config/*.example.json
+
+# Logs
+logs/
+*.log

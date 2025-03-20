@@ -1,0 +1,52 @@
+paths:
+  data: C:\Users\pepec\Documents\Notefy IA\Data synthetic\Data
+  templates:
+    base: C:\Users\pepec\Documents\Notefy IA\Data synthetic\templates
+    campos_global: C:\Users\pepec\Documents\Notefy IA\Data synthetic\templates\Campos
+      Master Global
+    campos_codigos: C:\Users\pepec\Documents\Notefy IA\Data synthetic\templates\Campos
+      Codigos
+    archivos_campos: C:\Users\pepec\Documents\Notefy IA\Data synthetic\templates\archivos
+      de campos
+  output: C:\Users\pepec\Documents\Notefy IA\Data synthetic\output
+  temp: C:\Users\pepec\Documents\Notefy IA\Data synthetic\temp
+  logs: C:\Users\pepec\Documents\Notefy IA\Data synthetic\logs
+  data_path: "Data"  # Ruta relativa a la raíz del proyecto
+  templates_path: "templates"
+  output_path: "output"
+pdf_extractor:
+  use_ai: true
+  min_quality_threshold: 80
+  ocr_language: spa+eng
+  ocr_config: --psm 1 --oem 3
+  cache_results: true
+data_generation:
+  default_records: 10
+  max_records: 1000
+  locale: es_ES
+  seed: null
+template_manager:
+  validate_on_load: true
+  auto_fix_templates: true
+  supported_formats:
+  - json
+  - yaml
+  - yml
+system:
+  debug_mode: false
+  term_width: 80
+  use_colors: true
+  auto_backup: true
+  backup_interval_days: 7
+
+# Sección de servicios de IA actualizada con la ruta correcta
+ai_services:
+  google_cloud_vision:
+    enabled: true
+    credentials_file: credentials/pdf-read-451916-86851702569b.json
+    region: us-west1
+    timeout: 60
+  amazon_textract:
+    enabled: false
+    region: us-east-1
+    timeout: 90

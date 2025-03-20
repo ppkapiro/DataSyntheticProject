@@ -1,0 +1,22 @@
+=== DATOS EXTRAÍDOS ===
+
+Fecha de extracción: 2024-02-24T10:45:30
+Calidad de extracción: 95%
+
+=== CONTENIDO ===
+
+Registro #1:
+id: 1234
+nombre: Juan Pérez
+fecha_nacimiento: 1980-05-15
+diagnóstico: Evaluación inicial
+notas: Paciente presenta...
+
+Registro #2:
+id: 1235
+nombre: María García
+fecha_nacimiento: 1992-08-22
+diagnóstico: Seguimiento
+notas: Se observa mejoría...
+
+=== FIN DE DATOS ===

@@ -1,0 +1,617 @@
+campos:
+  AFFECT_CHOICES:
+    description: Campo de texto para Affect Choices
+    required: false
+    type: string
+  APPEARANCE_CHOICES:
+    description: Campo de texto para Appearance Choices
+    required: false
+    type: string
+  APPETITE_CHOICES:
+    description: Campo de texto para Appetite Choices
+    required: false
+    type: string
+  Bio:
+    description: Campo de texto para Bio
+    required: false
+    type: string
+  HYDRATION_CHOICES:
+    description: Campo de texto para Hydration Choices
+    required: false
+    type: string
+  JUDGMENT_OR_INSIGHT_CHOICES:
+    description: Campo de texto para Judgment Or Insight Choices
+    required: false
+    type: string
+  MOOD_CHOICES:
+    description: Campo de texto para Mood Choices
+    required: false
+    type: string
+  MOTOR_CHOICES:
+    description: Campo de texto para Motor Choices
+    required: false
+    type: string
+  NUTRITIONAL_SCORE_CHOICES:
+    description: Campo de texto para Nutritional Score Choices
+    required: false
+    type: string
+  ORIENTED_CHOICES:
+    description: Campo de texto para Oriented Choices
+    required: false
+    type: string
+  PROGRAM_CHOICES:
+    description: Campo de texto para Program Choices
+    required: false
+    type: string
+  RECENT_WEIGHT_CHANGE_CHOICES:
+    description: Campo de texto para Recent Weight Change Choices
+    required: false
+    type: string
+  RISK_CHOICES:
+    description: Campo de texto para Risk Choices
+    required: false
+    type: string
+  SPEECH_CHOICES:
+    description: Campo de texto para Speech Choices
+    required: false
+    type: string
+  THOUGHT_CONTENT_CHOICES:
+    description: Campo de texto para Thought Content Choices
+    required: false
+    type: string
+  THOUGHT_PROCESS_CHOICES:
+    description: Campo de texto para Thought Process Choices
+    required: false
+    type: string
+  TYPE_BYLL_CHOICES:
+    description: Campo de texto para Type Byll Choices
+    required: false
+    type: string
+  _("Adult and Current Experience (include work history, leisure activities, and interests)"), null:
+    description: Campo de texto para  ("Adult And Current Experience (Include Work
+      History, Leisure Activities, And Interests)"), Null
+    required: false
+    type: string
+  _("Do you have any physical limitations that may hinder your ability to learn?"), default:
+    description: Campo de texto para  ("Do You Have Any Physical Limitations That
+      May Hinder Your Ability To Learn?"), Default
+    required: false
+    type: string
+  _("Do you have any religious/cultural practice that may hinder your educational goals?"), default:
+    description: Campo de texto para  ("Do You Have Any Religious/Cultural Practice
+      That May Hinder Your Educational Goals?"), Default
+    required: false
+    type: string
+  _("Has 3 or more drinks of beer, liquor or wine almost every day."), default:
+    description: Campo de texto para  ("Has 3 Or More Drinks Of Beer, Liquor Or Wine
+      Almost Every Day."), Default
+    required: false
+    type: string
+  _("Has an illness or condition that changed the kind and/or amount of food eaten?"), default:
+    description: Campo de texto para  ("Has An Illness Or Condition That Changed The
+      Kind And/Or Amount Of Food Eaten?"), Default
+    required: false
+    type: string
+  _("Has the client received behavioral health service in the last 2 years due to suicide?"), default:
+    description: Campo de texto para  ("Has The Client Received Behavioral Health
+      Service In The Last 2 Years Due To Suicide?"), Default
+    required: false
+    type: string
+  _("Takes 3 or more different prescribed or over-the-counter drugs a day."), default:
+    description: Campo de texto para  ("Takes 3 Or More Different Prescribed Or Over-The-Counter
+      Drugs A Day."), Default
+    required: false
+    type: string
+  _("Without wanting to, has lost or gained 10 pounds in the last 6 months."), default:
+    description: Campo de texto para  ("Without Wanting To, Has Lost Or Gained 10
+      Pounds In The Last 6 Months."), Default
+    required: false
+    type: string
+  _('Fecha de aprobación del practicante sin licencia'), db_index:
+    description: Campo de texto para  ('Fecha De AprobacióN Del Practicante Sin Licencia'),
+      Db Index
+    required: false
+    type: string
+  abuse_history_denied:
+    description: Campo de texto para Abuse History Denied
+    required: false
+    type: string
+  abuse_report_outcome:
+    description: Campo de texto para Abuse Report Outcome
+    required: false
+    type: string
+  adult_experience:
+    description: Campo de texto para Adult Experience
+    required: false
+    type: string
+  affect:
+    description: Campo de texto para Affect
+    required: false
+    type: string
+  alternative_diagnosis:
+    description: Campo de texto para Alternative Diagnosis
+    required: false
+    type: string
+  appearance:
+    description: Campo de texto para Appearance
+    required: false
+    type: string
+  appetite:
+    description: Campo de texto para Appetite
+    required: false
+    type: string
+  approval_of_clinical_supervisor:
+    description: Campo de texto para Approval Of Clinical Supervisor
+    required: false
+    type: string
+  approval_of_licensed_practitioner:
+    description: Campo de texto para Approval Of Licensed Practitioner
+    required: false
+    type: string
+  approval_of_unlicensed_practitioner:
+    description: Campo de texto para Approval Of Unlicensed Practitioner
+    required: false
+    type: string
+  assessment_of_situation:
+    description: Campo de texto para Assessment Of Situation
+    required: false
+    type: string
+  behavioral_explanation:
+    description: Campo de texto para Behavioral Explanation
+    required: false
+    type: string
+  behavioral_health_service_last_2_years:
+    description: Campo de texto para Behavioral Health Service Last 2 Years
+    required: false
+    type: string
+  blank:
+    description: Campo de texto para Blank
+    required: false
+    type: string
+  can_follow_understand_directions:
+    description: Campo de texto para Can Follow Understand Directions
+    required: false
+    type: string
+  childhood_adolescence_description:
+    description: Campo de texto para Childhood Adolescence Description
+    required: false
+    type: string
+  choices:
+    description: Campo de texto para Choices
+    required: false
+    type: string
+  clinical_supervisor:
+    description: Campo de texto para Clinical Supervisor
+    required: false
+    type: string
+  comments:
+    description: Campo de texto para Comments
+    required: false
+    type: string
+  concur_diagnosis:
+    description: Campo de texto para Concur Diagnosis
+    required: false
+    type: string
+  date:
+    description: Campo de texto para Date
+    required: false
+    type: string
+  date_of_abuse:
+    description: Campo de texto para Date Of Abuse
+    required: false
+    type: string
+  date_of_approval_of_clinical_supervisor:
+    description: Campo de texto para Date Of Approval Of Clinical Supervisor
+    required: false
+    type: string
+  date_of_approval_of_licensed_practitioner:
+    description: Campo de texto para Date Of Approval Of Licensed Practitioner
+    required: false
+    type: string
+  date_of_approval_of_unlicensed_practitioner:
+    description: Campo de texto para Date Of Approval Of Unlicensed Practitioner
+    required: false
+    type: string
+  date_records_treatment:
+    description: Campo de texto para Date Records Treatment
+    required: false
+    type: string
+  date_referral_assessment:
+    description: Campo de texto para Date Referral Assessment
+    required: false
+    type: string
+  date_referred_nutritional_score:
+    description: Campo de texto para Date Referred Nutritional Score
+    required: false
+    type: string
+  db_index:
+    description: Campo de texto para Db Index
+    required: false
+    type: string
+  default:
+    description: Campo de texto para Default
+    required: false
+    type: string
+  denied_any_current_suicidal:
+    description: Campo de texto para Denied Any Current Suicidal
+    required: false
+    type: string
+  difficulty_self_care_food:
+    description: Campo de texto para Difficulty Self Care Food
+    required: false
+    type: string
+  does_client_requiere_referral:
+    description: Campo de texto para Does Client Requiere Referral
+    required: false
+    type: string
+  eats_alone:
+    description: Campo de texto para Eats Alone
+    required: false
+    type: string
+  experiences_pain:
+    description: Campo de texto para Experiences Pain
+    required: false
+    type: string
+  family_assessment_situation:
+    description: Campo de texto para Family Assessment Situation
+    required: false
+    type: string
+  family_emotional_functioning:
+    description: Campo de texto para Family Emotional Functioning
+    required: false
+    type: string
+  few_fruits_vegetables_milk:
+    description: Campo de texto para Few Fruits Vegetables Milk
+    required: false
+    type: string
+  fewer_than_two_meals:
+    description: Campo de texto para Fewer Than Two Meals
+    required: false
+    type: string
+  frequent_alcohol_consumption:
+    description: Campo de texto para Frequent Alcohol Consumption
+    required: false
+    type: string
+  has_plan_or_access:
+    description: Campo de texto para Has Plan Or Access
+    required: false
+    type: string
+  help_text:
+    description: Campo de texto para Help Text
+    required: false
+    type: string
+  hospitalization_explanation:
+    description: Campo de texto para Hospitalization Explanation
+    required: false
+    type: string
+  hospitalized_for_depression:
+    description: Campo de texto para Hospitalized For Depression
+    required: false
+    type: string
+  hydration:
+    description: Campo de texto para Hydration
+    required: false
+    type: string
+  illness_affecting_food:
+    description: Campo de texto para Illness Affecting Food
+    required: false
+    type: string
+  incident_details:
+    description: Campo de texto para Incident Details
+    required: false
+    type: string
+  information_coordinated:
+    description: Campo de texto para Information Coordinated
+    required: false
+    type: string
+  information_coordination:
+    description: Campo de texto para Information Coordination
+    required: false
+    type: string
+  insight:
+    description: Campo de texto para Insight
+    required: false
+    type: string
+  insufficient_money_for_food:
+    description: Campo de texto para Insufficient Money For Food
+    required: false
+    type: string
+  judgment:
+    description: Campo de texto para Judgment
+    required: false
+    type: string
+  legal_history:
+    description: Campo de texto para Legal History
+    required: false
+    type: string
+  legal_representative_assessment_of_situation:
+    description: Campo de texto para Legal Representative Assessment Of Situation
+    required: false
+    type: string
+  licensed_practitioner:
+    description: Campo de texto para Licensed Practitioner
+    required: false
+    type: string
+  location_of_incident:
+    description: Campo de texto para Location Of Incident
+    required: false
+    type: string
+  location_records_treatment:
+    description: Campo de texto para Location Records Treatment
+    required: false
+    type: string
+  location_reference:
+    description: Campo de texto para Location Reference
+    required: false
+    type: string
+  location_referral_assessment:
+    description: Campo de texto para Location Referral Assessment
+    required: false
+    type: string
+  max_length:
+    description: Campo de texto para Max Length
+    required: false
+    type: string
+  mood:
+    description: Campo de texto para Mood
+    required: false
+    type: string
+  motor:
+    description: Campo de texto para Motor
+    required: false
+    type: string
+  multiple_medications_daily:
+    description: Campo de texto para Multiple Medications Daily
+    required: false
+    type: string
+  'null':
+    description: Campo de texto para Null
+    required: false
+    type: string
+  nutritional_score:
+    description: Campo de texto para Nutritional Score
+    required: false
+    type: string
+  nutritional_score_choices:
+    description: Campo de texto para Nutritional Score Choices
+    required: false
+    type: string
+  on_delete:
+    description: Campo de texto para On Delete
+    required: false
+    type: string
+  oriented:
+    description: Campo de texto para Oriented
+    required: false
+    type: string
+  owns_weapon:
+    description: Campo de texto para Owns Weapon
+    required: false
+    type: string
+  owns_weapon_explanation:
+    description: Campo de texto para Owns Weapon Explanation
+    required: false
+    type: string
+  pain_duration_frequency:
+    description: Campo de texto para Pain Duration Frequency
+    required: false
+    type: string
+  pain_location:
+    description: Campo de texto para Pain Location
+    required: false
+    type: string
+  pain_severity_rating:
+    description: Campo de texto para Pain Severity Rating
+    required: false
+    type: string
+  pain_treatment_services:
+    description: Campo de texto para Pain Treatment Services
+    required: false
+    type: string
+  patient:
+    description: Campo de texto para Patient
+    required: false
+    type: string
+  personal_and_family_psychiatric_history:
+    description: Campo de texto para Personal And Family Psychiatric History
+    required: false
+    type: string
+  physical_limitations_hindering_learning:
+    description: Campo de texto para Physical Limitations Hindering Learning
+    required: false
+    type: string
+  physician_visit_date:
+    description: Campo de texto para Physician Visit Date
+    required: false
+    type: string
+  physician_visit_reason:
+    description: Campo de texto para Physician Visit Reason
+    required: false
+    type: string
+  presenting_problems:
+    description: Campo de texto para Presenting Problems
+    required: false
+    type: string
+  primary_care_physician:
+    description: Campo de texto para Primary Care Physician
+    required: false
+    type: string
+  problems:
+    description: Campo de texto para Problems
+    required: false
+    type: string
+  program:
+    description: Campo de texto para Program
+    required: false
+    type: string
+  provide_integrated_summary_below:
+    description: Campo de texto para Provide Integrated Summary Below
+    required: false
+    type: string
+  recent_weight_change:
+    description: Campo de texto para Recent Weight Change
+    required: false
+    type: string
+  records_treatment:
+    description: Campo de texto para Records Treatment
+    required: false
+    type: string
+  referral_assessment:
+    description: Campo de texto para Referral Assessment
+    required: false
+    type: string
+  referral_location:
+    description: Campo de texto para Referral Location
+    required: false
+    type: string
+  referral_source:
+    description: Campo de texto para Referral Source
+    required: false
+    type: string
+  referral_to_physician_or_specialist:
+    description: Campo de texto para Referral To Physician Or Specialist
+    required: false
+    type: string
+  referred_nutritional_score:
+    description: Campo de texto para Referred Nutritional Score
+    required: false
+    type: string
+  related_name:
+    description: Campo de texto para Related Name
+    required: false
+    type: string
+  relationship_family_friends_romantic:
+    description: Campo de texto para Relationship Family Friends Romantic
+    required: false
+    type: string
+  release_information:
+    description: Campo de texto para Release Information
+    required: false
+    type: string
+  religious_cultural_practice_hindrance:
+    description: Campo de texto para Religious Cultural Practice Hindrance
+    required: false
+    type: string
+  report_date:
+    description: Campo de texto para Report Date
+    required: false
+    type: string
+  risk_to_others:
+    description: Campo de texto para Risk To Others
+    required: false
+    type: string
+  risk_to_self:
+    description: Campo de texto para Risk To Self
+    required: false
+    type: string
+  safety_plan_reviewed:
+    description: Campo de texto para Safety Plan Reviewed
+    required: false
+    type: string
+  sensory_impairment_affecting_learning:
+    description: Campo de texto para Sensory Impairment Affecting Learning
+    required: false
+    type: string
+  setting:
+    description: Campo de texto para Setting
+    required: false
+    type: string
+  sexually_active:
+    description: Campo de texto para Sexually Active
+    required: false
+    type: string
+  sexually_active_risk:
+    description: Campo de texto para Sexually Active Risk
+    required: false
+    type: string
+  speech:
+    description: Campo de texto para Speech
+    required: false
+    type: string
+  spiritual_beliefs:
+    description: Campo de texto para Spiritual Beliefs
+    required: false
+    type: string
+  substance_abuse:
+    description: Campo de texto para Substance Abuse
+    required: false
+    type: string
+  thought_content:
+    description: Campo de texto para Thought Content
+    required: false
+    type: string
+  thought_killing_self_others:
+    description: Campo de texto para Thought Killing Self Others
+    required: false
+    type: string
+  thought_killing_self_others_explanation:
+    description: Campo de texto para Thought Killing Self Others Explanation
+    required: false
+    type: string
+  thought_process:
+    description: Campo de texto para Thought Process
+    required: false
+    type: string
+  through:
+    description: Campo de texto para Through
+    required: false
+    type: string
+  time_end:
+    description: Campo de texto para Time End
+    required: false
+    type: string
+  time_start:
+    description: Campo de texto para Time Start
+    required: false
+    type: string
+  tooth_or_mouth_problems:
+    description: Campo de texto para Tooth Or Mouth Problems
+    required: false
+    type: string
+  treated_for_pain:
+    description: Campo de texto para Treated For Pain
+    required: false
+    type: string
+  treatment_needs:
+    description: Campo de texto para Treatment Needs
+    required: false
+    type: string
+  treatment_recommendations:
+    description: Campo de texto para Treatment Recommendations
+    required: false
+    type: string
+  type_bill:
+    description: Campo de texto para Type Bill
+    required: false
+    type: string
+  type_delusion:
+    description: Campo de texto para Type Delusion
+    required: false
+    type: string
+  type_hallucination:
+    description: Campo de texto para Type Hallucination
+    required: false
+    type: string
+  unintentional_weight_change:
+    description: Campo de texto para Unintentional Weight Change
+    required: false
+    type: string
+  unlicensed_practitioner:
+    description: Campo de texto para Unlicensed Practitioner
+    required: false
+    type: string
+  validators:
+    description: Campo de texto para Validators
+    required: false
+    type: string
+  verbose_name:
+    description: Campo de texto para Verbose Name
+    required: false
+    type: string
+  visited_physician_last_2_years:
+    description: Campo de texto para Visited Physician Last 2 Years
+    required: false
+    type: string
+fecha_generacion: '2025-02-27T12:16:37.550938'
+nombre: Bio (Assessments)_Campos
+tipo: import_template

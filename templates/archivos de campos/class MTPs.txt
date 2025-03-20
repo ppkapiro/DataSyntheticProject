@@ -1,0 +1,566 @@
+class MTPs(DateAbstract, NoteAbstract):
+    patient = models.OneToOneField(Patients, on_delete=models.PROTECT, verbose_name=_('Paciente'),
+                                   related_name='mtp', db_index=True)
+    date = models.DateField(_('MTP Date'), db_index=True, default=timezone.now)
+    time_start = models.TimeField(_('Start Time'), db_index=True, default=default_time_start)
+    time_end = models.TimeField(_('End Time'), db_index=True)
+    client_strengths = models.TextField(_("Client's Strengths"),
+                                        help_text=_("Factors that will assist in client's recovery"))
+    client_limitations = models.TextField(("Client's Limitations"), help_text=(
+        "Factors that currently impede patient's progress and ability to function"))
+    rationale_update = models.TextField(("Rationale for Update"), null=True, blank=True, help_text=(
+        "All Treatment Team Members will have ongoing contact with adjunct services treatment team throughout "
+        "services being rendered, in order to assure coordination of continuity of care."))
+    date_update_rationale = models.DateField(_("Update Rationale"), db_index=True, default=timezone.now)
+
+    substance_abuse = models.BooleanField(_('Substance Abuse Service Needed'), default=False, db_index=True)
+    place_services_substance_abuse = models.CharField(_('Recommended Service Location for Substance Abuse'),
+                                                      max_length=400, null=True, blank=True, db_index=True)
+    release_signed_substance_abuse = models.CharField(_('Substance Abuse Information Release Signed'), db_index=True,
+                                                      null=True, blank=True, max_length=100)
+
+    legal = models.BooleanField(_('Legal Service Needed'), default=False, db_index=True)
+    place_services_legal = models.CharField(_('Recommended Service Location for Legal Issues'),
+                                            max_length=400, null=True, blank=True, db_index=True)
+    release_signed_legal = models.CharField(_('Legal Information Release Signed'), max_length=100, db_index=True,
+                                            null=True, blank=True)
+
+    health = models.BooleanField(_('Health Service Needed'), default=False, db_index=True)
+    place_services_health = models.CharField(_('Recommended Service Location for Health Issues'),
+                                             max_length=400, null=True, blank=True, db_index=True)
+    release_signed_health = models.CharField(_('Health Information Release Signed'), max_length=100, db_index=True,
+                                             null=True, blank=True)
+
+    pain = models.BooleanField(_('Pain Management Service Needed'), default=False, db_index=True)
+    place_services_pain = models.CharField(_('Recommended Service Location for Pain Management'),
+                                           max_length=400, null=True, blank=True, db_index=True)
+    release_signed_pain = models.CharField(_('Pain Management Information Release Signed'), max_length=100,
+                                           db_index=True, null=True, blank=True)
+
+    other = models.BooleanField(_('Other Service Needed'), default=False, db_index=True)
+    place_services_other = models.CharField(_('Recommended Service Location for Other Needs'),
+                                            max_length=400, null=True, blank=True, db_index=True)
+    release_signed_other = models.CharField(_('Other Information Release Signed'), max_length=100, db_index=True,
+                                            null=True, blank=True)
+
+    # Area de Focus # 1
+    area_focus1 = models.TextField(str(_('Area of Focus')) + ' 1:')
+    goal1 = models.TextField(str(_('Goal')) + ' # 1')
+    date_goal1_opened = models.DateField(str(('Date Goal')) + ' # 1 ' + str(('Opened')) + ':', db_index=True)
+    target_date1 = models.DateField(str(_('Target Date')) + ' # 1', db_index=True)
+    review11 = models.CharField(str(('Review')) + ' 1 ' + str(('of Goal')) + ' # 1', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target11 = models.CharField(str(('Target')) + ' 1 ' + str(('of Goal')) + ' # 1', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status11 = models.CharField(str(('Goal Status')) + ' 1 ' + str(('of Goal')) + ' # 1', max_length=255,
+                                db_index=True, null=True, blank=True)
+    review12 = models.CharField(str(('Review')) + ' 2 ' + str(('of Goal')) + ' # 1', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target12 = models.CharField(str(('Target')) + ' 2 ' + str(('of Goal')) + ' # 1', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status12 = models.CharField(str(('Goal Status')) + ' 2 ' + str(('of Goal')) + ' # 1', max_length=255,
+                                db_index=True, null=True, blank=True)
+
+    # Area de Focus # 2
+    area_focus2 = models.TextField(str(_('Area of Focus')) + ' 2:')
+    goal2 = models.TextField(str(_('Goal')) + ' # 2')
+    date_goal2_opened = models.DateField(str(('Date Goal')) + ' # 2 ' + str(('Opened')) + ':', db_index=True)
+    target_date2 = models.DateField(str(_('Target Date')) + ' # 2', db_index=True)
+    review21 = models.CharField(str(('Review')) + ' 1 ' + str(('of Goal')) + ' # 2', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target21 = models.CharField(str(('Target')) + ' 1 ' + str(('of Goal')) + ' # 2', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status21 = models.CharField(str(('Goal Status')) + ' 1 ' + str(('of Goal')) + ' # 2', max_length=255,
+                                db_index=True, null=True, blank=True)
+    review22 = models.CharField(str(('Review')) + ' 2 ' + str(('of Goal')) + ' # 2', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target22 = models.CharField(str(('Target')) + ' 2 ' + str(('of Goal')) + ' # 2', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status22 = models.CharField(str(('Goal Status')) + ' 2 ' + str(('of Goal')) + ' # 2', max_length=255,
+                                db_index=True, null=True, blank=True)
+
+    # Area de Focus # 3
+    area_focus3 = models.TextField(str(_('Area of Focus')) + ' 3:')
+    goal3 = models.TextField(str(_('Goal')) + ' # 3')
+    date_goal3_opened = models.DateField(str(('Date Goal')) + ' # 3 ' + str(('Opened')) + ':', db_index=True)
+    target_date3 = models.DateField(str(_('Target Date')) + ' # 3', db_index=True)
+    review31 = models.CharField(str(('Review')) + ' 1 ' + str(('of Goal')) + ' # 3', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target31 = models.CharField(str(('Target')) + ' 1 ' + str(('of Goal')) + ' # 3', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status31 = models.CharField(str(('Goal Status')) + ' 1 ' + str(('of Goal')) + ' # 3', max_length=255,
+                                db_index=True, null=True, blank=True)
+    review32 = models.CharField(str(('Review')) + ' 2 ' + str(('of Goal')) + ' # 3', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target32 = models.CharField(str(('Target')) + ' 2 ' + str(('of Goal')) + ' # 3', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status32 = models.CharField(str(('Goal Status')) + ' 2 ' + str(('of Goal')) + ' # 3', max_length=255,
+                                db_index=True, null=True, blank=True)
+
+    # Area de Focus # 4
+    area_focus4 = models.TextField(str(_('Area of Focus')) + ' 4:')
+    goal4 = models.TextField(str(_('Goal')) + ' # 4')
+    date_goal4_opened = models.DateField(str(('Date Goal')) + ' # 4 ' + str(('Opened')) + ':', db_index=True)
+    target_date4 = models.DateField(str(_('Target Date')) + ' # 4', db_index=True)
+    review41 = models.CharField(str(('Review')) + ' 1 ' + str(('of Goal')) + ' # 4', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target41 = models.CharField(str(('Target')) + ' 1 ' + str(('of Goal')) + ' # 4', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status41 = models.CharField(str(('Goal Status')) + ' 1 ' + str(('of Goal')) + ' # 4', max_length=255,
+                                db_index=True, null=True, blank=True)
+    review42 = models.CharField(str(('Review')) + ' 2 ' + str(('of Goal')) + ' # 4', max_length=255, db_index=True,
+                                null=True, blank=True)
+    target42 = models.CharField(str(('Target')) + ' 2 ' + str(('of Goal')) + ' # 4', max_length=255, db_index=True,
+                                null=True, blank=True)
+    status42 = models.CharField(str(('Goal Status')) + ' 2 ' + str(('of Goal')) + ' # 4', max_length=255,
+                                db_index=True, null=True, blank=True)
+
+    anticipated_length_of_treatment = models.PositiveSmallIntegerField(_("Anticipated Length of Treatment (months)"),
+                                                                       default=6, db_index=True)
+    coordinated_services = models.ManyToManyField(CoordinatedServices, verbose_name=_("Coordinated Services"),
+                                                  through='CoordinatedServicesMtp', related_name='mtps')
+
+    # Aprobación del paciente
+    patient_signature = JSignatureField(_("Patient's Signature"), null=True, blank=True)
+    date_of_approval_of_paciente = models.DateField(_('Fecha de aprobación del paciente'), db_index=True, null=True,
+                                                    blank=True)
+
+    # Aprobación del practicante no autorizado
+    unlicensed_practitioner = models.ForeignKey(UnlicensedTherapists, verbose_name=_("Unlicensed Practitioner"),
+                                                related_name="mtps", db_index=True, on_delete=models.PROTECT,
+                                                null=True, blank=True)
+    approval_of_unlicensed_practitioner = models.BooleanField(_('Aprobación del practicante sin licencia'),
+                                                              db_index=True)
+    date_of_approval_of_unlicensed_practitioner = models.DateField(
+        _('Fecha de aprobación del practicante sin licencia'), db_index=True, null=True, blank=True)
+
+    # Aprobación del practicante autorizado
+    licensed_practitioner = models.ForeignKey(LicensedPractitioners, verbose_name=_("Licensed Practitioner"),
+                                              related_name="mtps", db_index=True, on_delete=models.PROTECT,
+                                              null=True, blank=True)
+    approval_of_licensed_practitioner = models.BooleanField(_('Aprobación del practicante con licencia'), db_index=True)
+    date_of_approval_of_licensed_practitioner = models.DateField(_('Fecha de aprobación del practicante con licencia'),
+                                                                 db_index=True, null=True, blank=True)
+
+    # Aprobación del supervisor
+    clinical_supervisor = models.ForeignKey(ClinicalSupervisors, verbose_name=_("Clinical Supervisor"),
+                                            related_name="mtps", db_index=True, on_delete=models.PROTECT,
+                                            null=True, blank=True)
+    approval_of_clinical_supervisor = models.BooleanField(_('Aprobación del supervisor de la clínica'), db_index=True)
+    date_of_approval_of_clinical_supervisor = models.DateField(_('Fecha de aprobación del supervisor de la clínica'),
+                                                               db_index=True, null=True, blank=True)
+    # Aprobación del legal guardian
+    guardian_signature = JSignatureField(_("Legal Guardian's Signature"), null=True, blank=True)
+    date_of_approval_of_legal_guardian = models.DateField(_('Fecha de aprobación del legal guardian'),
+                                                          db_index=True, null=True, blank=True)
+
+    def _str_(self):
+        return f"{str(self.patient)}"
+
+    class Meta:
+        verbose_name = _("MTP")
+        verbose_name_plural = _("MTPs")
+        db_table = 'MTPs'
+
+        permissions = [
+            ("export_mtps", _("Can export mtps")),
+            ('download_mtps', _('Can download MTPS PDFs'))
+        ]
+
+        indexes = [
+            # Índices combinados para consultas generales
+            models.Index(fields=['patient', 'date'], name='idx_ass_date'),
+            models.Index(fields=['patient', 'date', 'time_start', 'time_end'], name='idx_ass_date_time'),
+            models.Index(fields=['date', 'time_start', 'time_end'], name='idx_date_time'),
+
+            # Índices para consultas específicas adicionales
+            models.Index(fields=['patient', 'time_start'], name='idx_ass_tstart'),
+            models.Index(fields=['patient', 'time_end'], name='idx_ass_tend'),
+            models.Index(fields=['patient', 'anticipated_length_of_treatment'], name='idx_ass_treat'),
+            models.Index(fields=['date', 'time_start'], name='idx_date_tstart'),
+            models.Index(fields=['date', 'time_end'], name='idx_date_tend'),
+            models.Index(fields=['time_start', 'time_end'], name='idx_tstart_tend'),
+            models.Index(fields=['patient', 'date', 'time_end'], name='idx_ass_date_tend'),
+            models.Index(fields=['patient', 'date', 'time_start'], name='idx_ass_date_tstart'),
+            models.Index(fields=['date', 'anticipated_length_of_treatment'], name='idx_date_treat'),
+
+            # Índices para Substance Abuse
+            models.Index(fields=['substance_abuse', 'place_services_substance_abuse'], name='idx_sub_place'),
+            models.Index(fields=['substance_abuse', 'release_signed_substance_abuse'], name='idx_sub_release'),
+            models.Index(fields=['substance_abuse', 'place_services_substance_abuse', 'release_signed_substance_abuse'],
+                         name='idx_sub_full'),
+
+            # Índices para Legal
+            models.Index(fields=['legal', 'place_services_legal'], name='idx_legal_place'),
+            models.Index(fields=['legal', 'release_signed_legal'], name='idx_legal_release'),
+            models.Index(fields=['legal', 'place_services_legal', 'release_signed_legal'], name='idx_legal_full'),
+
+            # Índices para Health
+            models.Index(fields=['health', 'place_services_health'], name='idx_health_place'),
+            models.Index(fields=['health', 'release_signed_health'], name='idx_health_release'),
+            models.Index(fields=['health', 'place_services_health', 'release_signed_health'], name='idx_health_full'),
+
+            # Índices para Pain
+            models.Index(fields=['pain', 'place_services_pain'], name='idx_pain_place'),
+            models.Index(fields=['pain', 'release_signed_pain'], name='idx_pain_release'),
+            models.Index(fields=['pain', 'place_services_pain', 'release_signed_pain'], name='idx_pain_full'),
+
+            # Índices para Other
+            models.Index(fields=['other', 'place_services_other'], name='idx_other_place'),
+            models.Index(fields=['other', 'release_signed_other'], name='idx_other_release'),
+            models.Index(fields=['other', 'place_services_other', 'release_signed_other'], name='idx_other_full'),
+
+            # Índices para Focus Area 1
+            models.Index(fields=['area_focus1', 'goal1'], name='idx_focus1_goal'),
+            models.Index(fields=['goal1', 'date_goal1_opened', 'target_date1'], name='idx_focus1_dates'),
+            models.Index(fields=['review11', 'target11', 'status11'], name='idx_focus1_rev1'),
+            models.Index(fields=['review12', 'target12', 'status12'], name='idx_focus1_rev2'),
+
+            # Índices para Focus Area 2
+            models.Index(fields=['area_focus2', 'goal2'], name='idx_focus2_goal'),
+            models.Index(fields=['goal2', 'date_goal2_opened', 'target_date2'], name='idx_focus2_dates'),
+
+            # Índices para Focus Area 3
+            models.Index(fields=['area_focus3', 'goal3'], name='idx_focus3_goal'),
+            models.Index(fields=['goal3', 'date_goal3_opened', 'target_date3'], name='idx_focus3_dates'),
+
+            # Índices para Focus Area 4
+            models.Index(fields=['area_focus4', 'goal4'], name='idx_focus4_goal'),
+            models.Index(fields=['goal4', 'date_goal4_opened', 'target_date4'], name='idx_focus4_dates'),
+        ]
+
+    def clean(self):
+        """
+        Validates that date and date_update_rationale are not set in the future.
+        """
+        super().clean()
+        areas_focus = [self.area_focus1, self.area_focus2, self.area_focus3, self.area_focus4]
+        goals = [self.goal1, self.goal2, self.goal3, self.goal4]
+        if len(set(areas_focus)) < 4:
+            raise ValidationError({'_all_': _('Las areas de focus tienen que ser todas diferentes')})
+        if len(set(goals)) < 4:
+            raise ValidationError({'_all_': _('Los goals tienen que ser todos diferentes')})
+        if hasattr(self, 'patient'):
+            if not hasattr(self.patient, 'far'):
+                raise ValidationError({'patient': _('A este paciente le falta la FAR')})
+            if not hasattr(self.patient, 'assessment'):
+                raise ValidationError({'patient': _('A este paciente le falta la BIO')})
+        if self.date and self.date > timezone.now().date():
+            raise ValidationError({'date': _("The MTP Date cannot be in the future.")})
+        if not self.substance_abuse:
+            self.place_services_substance_abuse = None
+            self.release_signed_substance_abuse = None
+        if not self.legal:
+            self.place_services_legal = None
+            self.release_signed_legal = None
+        if not self.health:
+            self.place_services_health = None
+            self.release_signed_health = None
+        if not self.pain:
+            self.place_services_pain = None
+            self.release_signed_pain = None
+        if not self.other:
+            self.place_services_other = None
+            self.release_signed_other = None
+        if not self.approval_of_licensed_practitioner:
+            self.date_of_approval_of_licensed_practitioner = None
+        else:
+            if not self.pk:
+                self.date_of_approval_of_licensed_practitioner = timezone.now().date()
+            else:
+                # Si el objeto ya existe, verificar si is_active cambió a True
+                mtps_old = MTPs.objects.get(pk=self.pk)
+                if not mtps_old.approval_of_licensed_practitioner:  # Cambió de False a True
+                    self.date_of_approval_of_licensed_practitioner = timezone.now().date()
+
+        if not self.approval_of_unlicensed_practitioner:
+            self.date_of_approval_of_unlicensed_practitioner = None
+        else:
+            if not self.pk:
+                self.date_of_approval_of_unlicensed_practitioner = timezone.now().date()
+            else:
+                # Si el objeto ya existe, verificar si is_active cambió a True
+                mtps_old = MTPs.objects.get(pk=self.pk)
+                if not mtps_old.approval_of_unlicensed_practitioner:  # Cambió de False a True
+                    self.date_of_approval_of_unlicensed_practitioner = timezone.now().date()
+
+        if not self.approval_of_clinical_supervisor:
+            self.date_of_approval_of_clinical_supervisor = None
+        else:
+            if not self.pk:
+                self.date_of_approval_of_clinical_supervisor = timezone.now().date()
+            else:
+                # Si el objeto ya existe, verificar si is_active cambió a True
+                mtps_old = MTPs.objects.get(pk=self.pk)
+                if not mtps_old.approval_of_clinical_supervisor:  # Cambió de False a True
+                    self.date_of_approval_of_clinical_supervisor = timezone.now().date()
+
+        if self.patient_signature is None:
+            self.date_of_approval_of_paciente = None
+        else:
+            if not self.pk:
+                self.date_of_approval_of_paciente = timezone.now().date()
+            else:
+                # Si el objeto ya existe, verificar si is_active cambió a True
+                mtp_old = MTPs.objects.get(pk=self.pk)
+                if mtp_old.patient_signature is None:
+                    self.date_of_approval_of_paciente = timezone.now().date()
+
+        if self.guardian_signature is None:
+            self.date_of_approval_of_legal_guardian = None
+        else:
+            if not self.pk:
+                self.date_of_approval_of_legal_guardian = timezone.now().date()
+            else:
+                # Si el objeto ya existe, verificar si is_active cambió a True
+                mtp_old = MTPs.objects.get(pk=self.pk)
+                if mtp_old.guardian_signature is None:
+                    self.date_of_approval_of_legal_guardian = timezone.now().date()
+
+        translate_and_correct_fields(self)
+
+    def get_signature_as_base64(self, scale=0.5, width=500, height=200, person='legal'):
+        """
+        Devuelve la firma en formato base64 listo para renderizar como imagen.
+        Permite ajustar el tamaño de la firma con el parámetro scale.
+        """
+
+        if person == 'legal':
+            signature = self.guardian_signature
+        elif person == 'patient':
+            signature = self.patient_signature
+        else:
+            signature = None
+
+        if not signature:
+            return None
+
+        # Decodificar los datos de la firma (x, y)
+        strokes = json.loads(signature) if isinstance(signature, str) else signature
+
+        # Crear una imagen más pequeña
+        image = Image.new("RGB", (int(width * scale), int(height * scale)), "white")
+        draw = ImageDraw.Draw(image)
+
+        for stroke in strokes:
+            # Escalar las coordenadas x, y
+            x = [int(coord * scale) for coord in stroke.get('x', [])]
+            y = [int(coord * scale) for coord in stroke.get('y', [])]
+            points = list(zip(x, y))
+            draw.line(points, fill="black", width=2)  # Dibujar las líneas de la firma
+
+        # Convertir la imagen a base64
+        buffer = BytesIO()
+        image.save(buffer, format="PNG")
+        base64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        return f"data:image/png;base64,{base64_image}"
+
+    def get_legal_signature(self):
+        return self.get_signature_as_base64(person="legal")
+
+    def get_patient_signature(self):
+        return self.get_signature_as_base64(person="patient")
+
+
+class CoordinatedServicesMtp(DateAbstract):
+    mtp = models.ForeignKey(MTPs, on_delete=models.PROTECT, verbose_name=_('MTP'),
+                            related_name='coordinated_services_mtp', db_index=True)
+    coordinated_service = models.ForeignKey(CoordinatedServices, on_delete=models.PROTECT,
+                                            verbose_name=_('Coordinated Service'), db_index=True,
+                                            related_name='coordinated_services_mtp')
+    units = models.PositiveIntegerField(_('Number of units for the service'), db_index=True, default=16)
+    frequency = models.PositiveIntegerField(_('Frequency of the service (for week)'), db_index=True, default=4)
+    duration = models.PositiveIntegerField(_('Duration of the service (months)'), db_index=True, default=6)
+
+    class Meta:
+        verbose_name = _('Coordinated Service')
+        verbose_name_plural = _('Coordinated Services')
+        db_table = 'CoordinatedServicesMtp'
+
+        constraints = [
+            models.UniqueConstraint(fields=['mtp', 'coordinated_service'], name='unique_mtp_coordinated_service')]
+
+        indexes = [
+            models.Index(fields=['mtp', 'coordinated_service']),
+            models.Index(fields=['coordinated_service', 'units']),
+            models.Index(fields=['coordinated_service', 'frequency']),
+            models.Index(fields=['frequency', 'duration']),
+            models.Index(fields=['mtp', 'coordinated_service', 'duration']),
+        ]
+
+    def _str_(self):
+        return f"{str(self.mtp)} - {str(self.coordinated_service)} - {self.units} -{self.frequency} - {self.duration}"
+
+
+class ObjectivesFocusAbstract(models.Model):
+    mtp = models.ForeignKey(MTPs, on_delete=models.PROTECT, verbose_name=_('MTP'), related_name='%(class)s',
+                            db_index=True)
+    number_objective = models.PositiveSmallIntegerField(_('Number Objective'), db_index=True, null=True, blank=True)
+    objective = models.CharField(_('Objective'), max_length=655, db_index=True)
+    clinical_interventions = models.TextField(('Clinical Interventions'), help_text=('Treatment Strategies'))
+
+    review1 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    target1 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    status1 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    review2 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    target2 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+    status2 = models.CharField(max_length=255, db_index=True, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def reorder_numbers(self):
+        """
+        Reordena los números de los objetivos asegurando continuidad (sin saltos).
+        """
+        if not self.mtp_id:
+            return  # Evita errores si el objeto no tiene un MTP asociado
+
+        with transaction.atomic():  # Bloquea la BD para evitar inconsistencias
+            model_cls = self._meta.model
+            objectives = model_cls.objects.filter(mtp_id=self.mtp_id).order_by('number_objective')
+
+            for index, objective in enumerate(objectives, start=1):
+                if objective.number_objective != index:
+                    objective.number_objective = index
+                    objective.save(update_fields=['number_objective'])
+
+    def save(self, *args, **kwargs):
+        """
+        Asigna automáticamente number_objective al crear un nuevo registro
+        y se asegura de que la numeración sea continua.
+        """
+        if not self.mtp_id:
+            raise ValueError("El MTP asociado debe estar guardado antes de asignar number_objective.")
+
+        if not self.number_objective:  # Solo asignar si es nuevo
+            with transaction.atomic():
+                model_cls = self._meta.model
+                last_number = (
+                    model_cls.objects.filter(mtp_id=self.mtp_id)
+                    .select_for_update(nowait=True)  # Bloquea las filas existentes para evitar concurrencia
+                    .order_by('number_objective')
+                    .last()
+                )
+                self.number_objective = (last_number.number_objective + 1) if last_number else 1
+        translate_and_correct_fields(self)
+        super().save(*args, **kwargs)
+        self.reorder_numbers()  # Reordenar después de guardar
+
+    def delete(self, *args, **kwargs):
+        """
+        Reordena los números después de eliminar un objetivo.
+        """
+        super().delete(*args, **kwargs)  # Eliminamos el objeto
+        self.reorder_numbers()  # Llamamos a la función para reordenar
+
+
+class ObjectivesFocusNumberOne(ObjectivesFocusAbstract, DateAbstract):
+
+    def _str_(self):
+        return f"{str(self.mtp)}--1.{self.number_objective}- {self.objective}"
+
+    class Meta:
+        verbose_name = _('Objective Focus Number One')
+        verbose_name_plural = _('Objectives Focus Number One')
+        db_table = 'ObjectivesFocusNumberOne'
+
+        constraints = [models.UniqueConstraint(fields=['mtp', 'number_objective'], name='unique_mtp_number_objective')]
+
+        indexes = [
+            models.Index(fields=['mtp']),
+            models.Index(fields=['number_objective']),
+            models.Index(fields=['objective']),
+            models.Index(fields=['mtp', 'number_objective']),
+            models.Index(fields=['objective', 'number_objective']),
+            models.Index(fields=['review1', 'target1', 'status1']),
+            models.Index(fields=['review2', 'target2', 'status2']),
+            models.Index(fields=['mtp', 'objective', 'number_objective']),
+            models.Index(fields=['review1', 'review2']),
+            models.Index(fields=['target1', 'target2']),
+            models.Index(fields=['status1', 'status2']),
+        ]
+
+
+class ObjectivesFocusNumberTwo(ObjectivesFocusAbstract, DateAbstract):
+
+    def _str_(self):
+        return f"{str(self.mtp)}--2.{self.number_objective}- {self.objective}"
+
+    class Meta:
+        verbose_name = _('Objective Focus Number Two')
+        verbose_name_plural = _('Objectives Focus Number Two')
+        db_table = 'ObjectivesFocusNumberTwo'
+
+        constraints = [
+            models.UniqueConstraint(fields=['mtp', 'number_objective'], name='unique_mtp_number_objective_two')]
+
+        indexes = [
+            models.Index(fields=['mtp']),
+            models.Index(fields=['number_objective']),
+            models.Index(fields=['objective']),
+            models.Index(fields=['mtp', 'number_objective']),
+            models.Index(fields=['objective', 'number_objective']),
+            models.Index(fields=['review1', 'target1', 'status1']),
+            models.Index(fields=['review2', 'target2', 'status2']),
+            models.Index(fields=['mtp', 'objective', 'number_objective']),
+            models.Index(fields=['review1', 'review2']),
+            models.Index(fields=['target1', 'target2']),
+            models.Index(fields=['status1', 'status2']),
+        ]
+
+
+class ObjectivesFocusNumberThree(ObjectivesFocusAbstract, DateAbstract):
+
+    def _str_(self):
+        return f"{str(self.mtp)} - {self.objective} 3.{self.number_objective}"
+
+    class Meta:
+        verbose_name = _('Objective Focus Number Three')
+        verbose_name_plural = _('Objectives Focus Number Three')
+        db_table = 'ObjectivesFocusNumberThree'
+
+        constraints = [
+            models.UniqueConstraint(fields=['mtp', 'number_objective'], name='unique_mtp_number_objective_three')]
+
+        indexes = [
+            models.Index(fields=['mtp']),
+            models.Index(fields=['number_objective']),
+            models.Index(fields=['objective']),
+            models.Index(fields=['mtp', 'number_objective']),
+            models.Index(fields=['objective', 'number_objective']),
+            models.Index(fields=['review1', 'target1', 'status1']),
+            models.Index(fields=['review2', 'target2', 'status2']),
+            models.Index(fields=['mtp', 'objective', 'number_objective']),
+            models.Index(fields=['review1', 'review2']),
+            models.Index(fields=['target1', 'target2']),
+            models.Index(fields=['status1', 'status2']),
+        ]
+
+
+class ObjectivesFocusNumberFour(ObjectivesFocusAbstract, DateAbstract):
+
+    def _str_(self):
+        return f"{str(self.mtp)}--4.{self.number_objective}- {self.objective}"
+
+    class Meta:
+        verbose_name = _('Objective Focus Number Four')
+        verbose_name_plural = _('Objectives Focus Number Four')
+        db_table = 'ObjectivesFocusNumberFour'
+
+        constraints = [
+            models.UniqueConstraint(fields=['mtp', 'number_objective'], name='unique_mtp_number_objective_four')]
+
+        indexes = [
+            models.Index(fields=['mtp']),
+            models.Index(fields=['number_objective']),
+            models.Index(fields=['objective']),
+            models.Index(fields=['mtp', 'number_objective']),
+            models.Index(fields=['objective', 'number_objective']),
+            models.Index(fields=['review1', 'target1', 'status1']),
+            models.Index(fields=['review2', 'target2', 'status2']),
+            models.Index(fields=['mtp', 'objective', 'number_objective']),
+            models.Index(fields=['review1', 'review2']),
+            models.Index(fields=['target1', 'target2']),
+            models.Index(fields=['status1', 'status2']),
+        ]

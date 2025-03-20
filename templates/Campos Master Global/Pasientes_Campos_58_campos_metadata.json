@@ -1,0 +1,380 @@
+{
+  "nombre_archivo": "Pasientes_Campos_58_campos",
+  "tipo_documento": "import_template",
+  "fecha_generacion": "2025-02-27T12:26:43.954344",
+  "num_campos": 58,
+  "campos": [
+    "paciente",
+    "first_name",
+    "RegexValidator(regex",
+    "message",
+    "last_name",
+    "GENDER_CHOICES",
+    "gender",
+    "phone_personal",
+    "null",
+    "email_personal",
+    "postal_address",
+    "max_length",
+    "legal_guardian_full_name",
+    "db_index",
+    "legal_guardian_phone",
+    "RELATIONSHIP_CHOICES",
+    "relationship_with_legal_guardian",
+    "blank",
+    "postal_address_legal_guardian",
+    "country_birth",
+    "RACE_CHOICES",
+    "race",
+    "ETHNICITY_CHOICES",
+    "ethnicity",
+    "default",
+    "languages_can_speak",
+    "verbose_name",
+    "related_name",
+    "emergency_contact_full_name",
+    "relationship_with_emergency_contact",
+    "choices",
+    "emergency_contact_phone",
+    "postal_address_emergency_contact",
+    "date_of_admission",
+    "help_text",
+    "date_of_close",
+    "date_of_birth",
+    "date_of_death",
+    "mh_case_number",
+    "ssn",
+    "photo",
+    "signature",
+    "foreign_born_arrival_date",
+    "primary_country_raised",
+    "EDUCATION_LEVEL_CHOICES",
+    "education_level_completed",
+    "MARITAL_STATUS_CHOICES",
+    "marital_status",
+    "marriage_duration",
+    "cohabitation_duration",
+    "str((\"Duration of Cohabitation\")) + ' (' + str(('mounts')) + ')', null",
+    "separation_duration",
+    "divorce_duration",
+    "widowhood_duration",
+    "health_insurances",
+    "codes",
+    "through",
+    "medications"
+  ],
+  "calidad_extraccion": 0,
+  "metodo_analisis": "desconocido",
+  "indices_busqueda": {
+    "por_tipo": {
+      "string": [
+        "nombre",
+        "tipo",
+        "campos"
+      ],
+      "relation": [],
+      "date": [
+        "fecha_generacion"
+      ]
+    },
+    "requeridos": {
+      "nombre": "Pasientes_Campos",
+      "tipo": "import_template",
+      "fecha_generacion": "2025-02-27T12:26:43.954344",
+      "campos": {
+        "paciente": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Paciente"
+        },
+        "first_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para First Name"
+        },
+        "RegexValidator(regex": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Regexvalidator(Regex"
+        },
+        "message": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Message"
+        },
+        "last_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Last Name"
+        },
+        "GENDER_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Gender Choices"
+        },
+        "gender": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Gender"
+        },
+        "phone_personal": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Phone Personal"
+        },
+        "null": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Null"
+        },
+        "email_personal": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Email Personal"
+        },
+        "postal_address": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Postal Address"
+        },
+        "max_length": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Max Length"
+        },
+        "legal_guardian_full_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Legal Guardian Full Name"
+        },
+        "db_index": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Db Index"
+        },
+        "legal_guardian_phone": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Legal Guardian Phone"
+        },
+        "RELATIONSHIP_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Relationship Choices"
+        },
+        "relationship_with_legal_guardian": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Relationship With Legal Guardian"
+        },
+        "blank": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Blank"
+        },
+        "postal_address_legal_guardian": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Postal Address Legal Guardian"
+        },
+        "country_birth": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Country Birth"
+        },
+        "RACE_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Race Choices"
+        },
+        "race": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Race"
+        },
+        "ETHNICITY_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Ethnicity Choices"
+        },
+        "ethnicity": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Ethnicity"
+        },
+        "default": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Default"
+        },
+        "languages_can_speak": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Languages Can Speak"
+        },
+        "verbose_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Verbose Name"
+        },
+        "related_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Related Name"
+        },
+        "emergency_contact_full_name": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Emergency Contact Full Name"
+        },
+        "relationship_with_emergency_contact": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Relationship With Emergency Contact"
+        },
+        "choices": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Choices"
+        },
+        "emergency_contact_phone": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Emergency Contact Phone"
+        },
+        "postal_address_emergency_contact": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Postal Address Emergency Contact"
+        },
+        "date_of_admission": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Date Of Admission"
+        },
+        "help_text": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Help Text"
+        },
+        "date_of_close": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Date Of Close"
+        },
+        "date_of_birth": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Date Of Birth"
+        },
+        "date_of_death": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Date Of Death"
+        },
+        "mh_case_number": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Mh Case Number"
+        },
+        "ssn": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Ssn"
+        },
+        "photo": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Photo"
+        },
+        "signature": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Signature"
+        },
+        "foreign_born_arrival_date": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Foreign Born Arrival Date"
+        },
+        "primary_country_raised": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Primary Country Raised"
+        },
+        "EDUCATION_LEVEL_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Education Level Choices"
+        },
+        "education_level_completed": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Education Level Completed"
+        },
+        "MARITAL_STATUS_CHOICES": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Marital Status Choices"
+        },
+        "marital_status": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Marital Status"
+        },
+        "marriage_duration": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Marriage Duration"
+        },
+        "cohabitation_duration": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Cohabitation Duration"
+        },
+        "str((\"Duration of Cohabitation\")) + ' (' + str(('mounts')) + ')', null": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Str((\"Duration Of Cohabitation\")) + ' (' + Str(('Mounts')) + ')', Null"
+        },
+        "separation_duration": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Separation Duration"
+        },
+        "divorce_duration": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Divorce Duration"
+        },
+        "widowhood_duration": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Widowhood Duration"
+        },
+        "health_insurances": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Health Insurances"
+        },
+        "codes": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Codes"
+        },
+        "through": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Through"
+        },
+        "medications": {
+          "type": "string",
+          "required": false,
+          "description": "Campo de texto para Medications"
+        }
+      }
+    },
+    "opcionales": [],
+    "con_validacion": []
+  }
+}
