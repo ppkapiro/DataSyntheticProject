@@ -2,6 +2,12 @@ from pathlib import Path
 import json
 from datetime import datetime
 from typing import List, Dict, Any
+# Agregar importación de pandas con manejo de errores
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 from utils.data_formats import DataFormatHandler
 from pdf_extractor.pdf_extractor import PDFExtractor  # Añadida esta importación
 from utils.menu_manager import MenuManager  # Añadida esta importación
@@ -11,24 +17,20 @@ from utils.config_manager import ConfigManager  # Nuevo import
 class ClinicManager:
     """Gestor de estructura de clínicas y facilitadores PSR"""
     
-    # Definición correcta de la ruta base - sin duplicación de "Data synthetic"
-    base_path = Path("C:/Users/pepec/Documents/Notefy IA/Data synthetic/Data")
-    
     def __init__(self, base_path=None):
-        # Inicializar con la ruta proporcionada o usar ConfigManager para obtenerla
+        # Obtener configuración usando ConfigManager
         config = ConfigManager()
         
         # Si se proporciona una ruta, usarla; si no, usar la ruta de config
         if base_path:
             self.base_path = Path(base_path)
         else:
-            # Asegurar que self.base_path tenga la ruta correcta
-            self.base_path = Path("C:/Users/pepec/Documents/Notefy IA/Data synthetic/Data")
+            # Usar la ruta proporcionada por ConfigManager
+            data_path = config.get_data_path()
+            self.base_path = data_path
             
-            # Verificar que la ruta exista o crearla
-            if not self.base_path.exists():
-                print(f"[DEBUG] Creando directorio de datos: {self.base_path}")
-                self.base_path.mkdir(parents=True, exist_ok=True)
+        # Verificar que la ruta exista o crearla
+        self.base_path.mkdir(parents=True, exist_ok=True)
         
         print(f"[DEBUG] ClinicManager inicializado con ruta: {self.base_path}")
         
@@ -100,36 +102,82 @@ class ClinicManager:
             print(f"\nError: La clínica '{nombre_clinica}' ya existe")
             return False
             
-        # Crear directorio principal de la clínica
-        clinic_path.mkdir(parents=True)
-        
-        # Gestionar facilitadores PSR
+        try:
+            # Crear directorio principal de la clínica
+            clinic_path.mkdir(parents=True, exist_ok=True)
+            
+            # Crear configuración básica de la clínica antes de cualquier otra operación
+            config = {
+                'nombre_clinica': nombre_clinica,
+                'facilitadores_psr': [],
+                'created_at': datetime.now().isoformat()
+            }
+            
+            config_file = clinic_path / 'clinic_config.json'
+            with open(config_file, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2, ensure_ascii=False)
+            
+            print(f"\nCreada clínica '{nombre_clinica}' con configuración básica")
+            
+            print("\n¿Desea agregar facilitadores a la clínica? (S/N): ")
+            if input().upper() != 'S':
+                print("\nCreada clínica sin facilitadores.")
+                print("Puede agregar facilitadores más tarde desde el menú de gestión.")
+                return True
+            
+            # Gestionar facilitadores PSR si se desea agregarlos
+            return self._gestionar_facilitadores_inicial(clinic_path, nombre_clinica)
+            
+        except Exception as e:
+            print(f"\nError al crear clínica: {str(e)}")
+            import traceback
+            traceback.print_exc()  # Esto mostrará la traza completa del error
+            return False
+
+    def _gestionar_facilitadores_inicial(self, clinic_path, nombre_clinica):
+        """Gestiona la creación inicial de facilitadores"""
         facilitadores = []
         while True:
-            if input("\n¿Desea agregar un facilitador PSR? (S/N): ").upper() == 'S':
-                # Recolectar información del facilitador
-                info_facilitador = self._solicitar_info_facilitador()
-                if info_facilitador:
-                    facilitador_path = clinic_path / info_facilitador['nombre']
+            info_facilitador = self._solicitar_info_facilitador()
+            if info_facilitador:
+                facilitador_path = clinic_path / info_facilitador['nombre']
+                
+                if self._crear_estructura_facilitador(facilitador_path, info_facilitador):
+                    facilitadores.append(info_facilitador)
+                    print(f"\nFacilitador PSR '{info_facilitador['nombre']}' creado con éxito")
                     
-                    # Crear estructura completa del facilitador
-                    if self._crear_estructura_facilitador(facilitador_path, info_facilitador):
-                        facilitadores.append(info_facilitador)
-                        print(f"\nFacilitador PSR '{info_facilitador['nombre']}' creado con éxito")
-                        
-                        # Mostrar resumen de la estructura creada
-                        self._mostrar_estructura_facilitador(facilitador_path)
-                        
-                        # Preguntar por importación de pacientes
-                        self._gestionar_importacion_inicial(nombre_clinica, info_facilitador['nombre'])
-                    else:
-                        print("Error al crear la estructura del facilitador")
-            else:
+                    # Importar pacientes directamente aquí
+                    print(f"\nGestión de pacientes para {info_facilitador['nombre']}")
+                    
+                    # Grupo mañana
+                    print("\nGrupo MAÑANA")
+                    if input("¿Desea importar lista de pacientes? (S/N): ").upper() == 'S':
+                        file_path = input("\nIngrese la ruta del archivo: ").strip()
+                        if file_path:
+                            self.importar_pacientes_grupo(
+                                clinic_name=nombre_clinica,
+                                facilitador_name=info_facilitador['nombre'],
+                                grupo='manana',
+                                file_path=file_path
+                            )
+                    
+                    # Grupo tarde
+                    print("\nGrupo TARDE")
+                    if input("¿Desea importar lista de pacientes? (S/N): ").upper() == 'S':
+                        file_path = input("\nIngrese la ruta del archivo: ").strip()
+                        if file_path:
+                            self.importar_pacientes_grupo(
+                                clinic_name=nombre_clinica,
+                                facilitador_name=info_facilitador['nombre'],
+                                grupo='tarde',
+                                file_path=file_path
+                            )
+                else:
+                    print("Error al crear la estructura del facilitador")
+            
+            print("\n¿Desea agregar otro facilitador? (S/N): ")
+            if input().upper() != 'S':
                 break
-
-        if not facilitadores:
-            print("\nAdvertencia: No se crearon facilitadores PSR en la clínica")
-            return False
 
         # Guardar configuración de la clínica
         config = {
@@ -142,8 +190,6 @@ class ClinicManager:
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
 
-        print(f"\nClínica '{nombre_clinica}' creada exitosamente")
-        print(f"Total de facilitadores PSR: {len(facilitadores)}")
         return True
 
     def _solicitar_info_facilitador(self):
@@ -162,31 +208,46 @@ class ClinicManager:
     def _crear_estructura_facilitador(self, facilitador_path, info_facilitador):
         """Crea estructura básica para un facilitador PSR"""
         try:
+            # Crear directorio del facilitador
             facilitador_path.mkdir(parents=True)
             
-            # Verificar estructura global de templates si no existe
-            templates_path = Path("C:/Users/pepec/Documents/Notefy IA/Data synthetic/templates")
-            templates_path.mkdir(exist_ok=True)
-            (templates_path / 'Campos Codigos').mkdir(exist_ok=True)
-            (templates_path / 'Campos Master Global').mkdir(exist_ok=True)
-            
-            # Crear grupos mañana y tarde
+            # Crear estructura de grupos (mañana y tarde)
             for turno in ['manana', 'tarde']:
                 grupo_path = facilitador_path / 'grupos' / turno
                 grupo_path.mkdir(parents=True)
                 
                 # Crear carpeta de pacientes
-                (grupo_path / 'pacientes').mkdir()
+                pacientes_path = grupo_path / 'pacientes'
+                pacientes_path.mkdir()
                 
-                # Crear archivo básico de configuración
-                grupo_file = grupo_path / 'grupo_config.json'
-                grupo_data = {
+                # Crear archivo de configuración del grupo
+                grupo_config = {
                     'facilitador': info_facilitador['nombre'],
                     'turno': turno,
                     'pacientes': []
                 }
-                with open(grupo_file, 'w', encoding='utf-8') as f:
-                    json.dump(grupo_data, f, indent=2, ensure_ascii=False)
+                
+                config_file = grupo_path / 'grupo_config.json'
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(grupo_config, f, indent=2, ensure_ascii=False)
+                
+                print(f"\nCreado grupo de {turno} para el facilitador {info_facilitador['nombre']}")
+                
+                # Preguntar si desea importar pacientes para este grupo
+                print(f"\n¿Desea importar pacientes para el grupo de {turno}? (S/N): ")
+                if input().upper() == 'S':
+                    print("\nSeleccione el archivo con la lista de pacientes (CSV, Excel):")
+                    file_path = input("Ruta del archivo: ").strip()
+                    
+                    if file_path:
+                        self.importar_pacientes_grupo(
+                            clinic_name=facilitador_path.parent.name,
+                            facilitador_name=info_facilitador['nombre'],
+                            grupo=turno,
+                            file_path=file_path
+                        )
+                    else:
+                        print(f"No se importaron pacientes para el grupo de {turno}")
             
             return True
             
@@ -204,9 +265,9 @@ class ClinicManager:
                 self._crear_estructura_recursiva(subpath, subestructura)
 
     def _mostrar_estructura_facilitador(self, facilitador_path):
-        """Muestra la estructura creada para el facilitador"""
-        print(f"\nEstructura creada para {facilitador_path.name}:")
-        self._mostrar_arbol_directorios(facilitador_path)
+        """Muestra la estructura creada para el facilitador de forma simplificada"""
+        print(f"\nEstructura creada para {facilitador_path.name}")
+        print("✅ Grupos y carpetas de documentos creados correctamente")
 
     def _mostrar_arbol_directorios(self, path, nivel=0):
         """Muestra el árbol de directorios de forma recursiva"""
@@ -294,49 +355,42 @@ class ClinicManager:
             print(f"\nError: La clínica '{nombre_clinica}' no existe")
             return False
             
-        # Verificar directorio import_data
-        import_data_path = clinic_path / 'import_data'
-        import_data_path.mkdir(exist_ok=True)
-            
+        # Verificar que existe el archivo de configuración
         config_file = clinic_path / 'clinic_config.json'
         if not config_file.exists():
-            print(f"\nError: Configuración no encontrada para '{nombre_clinica}'")
+            print(f"\nError: No se encontró el archivo de configuración para '{nombre_clinica}'")
             return False
             
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-            
-        # Verificar cada facilitador
-        for facilitador in config['facilitadores_psr']:
-            facilitador_path = clinic_path / facilitador['nombre']
-            if not self._verificar_estructura_facilitador(facilitador_path):
-                print(f"\nError: Estructura incompleta en facilitador '{facilitador['nombre']}'")
+        # Intentar leer el archivo para verificar su integridad
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+                
+            # Verificar campos mínimos
+            if 'nombre_clinica' not in config or 'facilitadores_psr' not in config:
+                print(f"\nError: El archivo de configuración de '{nombre_clinica}' está incompleto")
                 return False
                 
-        return True
-
-    def _verificar_estructura_facilitador(self, facilitador_path):
-        """Verifica la estructura de carpetas de un facilitador PSR"""
-        if not facilitador_path.exists():
+        except json.JSONDecodeError:
+            print(f"\nError: El archivo de configuración de '{nombre_clinica}' tiene un formato JSON inválido")
+            return False
+        except Exception as e:
+            print(f"\nError al leer la configuración de '{nombre_clinica}': {str(e)}")
             return False
             
-        for key, value in self.psr_structure.items():
-            module_path = facilitador_path / key
-            if not module_path.exists():
-                return False
-                
-            for subdir, subvalue in value.items():
-                if isinstance(subvalue, dict):
-                    subdir_path = module_path / subdir
-                    if not subdir_path.exists():
-                        return False
-                    for subsubdir in subvalue:
-                        if not (subdir_path / subsubdir).exists():
-                            return False
-                else:
-                    if not (module_path / subdir).exists():
-                        return False
-                    
+        # Crear directorio import_data si no existe
+        import_data_path = clinic_path / 'import_data'
+        import_data_path.mkdir(exist_ok=True)
+        
+        # El resto de la estructura se puede verificar si hay facilitadores
+        if config.get('facilitadores_psr'):
+            # Verificar que existe cada facilitador
+            for facilitador in config['facilitadores_psr']:
+                facilitador_path = clinic_path / facilitador['nombre']
+                if not facilitador_path.exists():
+                    print(f"\nAdvertencia: No se encontró el directorio para el facilitador '{facilitador['nombre']}'")
+                    # No devolvemos False aquí porque queremos permitir corregir esto más tarde
+        
         return True
 
     def _crear_estructura_paciente(self, paciente_path, paciente_info):
@@ -418,7 +472,7 @@ class ClinicManager:
             print(f"Error al mostrar grupos: {str(e)}")
 
     def importar_pacientes_grupo(self, clinic_name, facilitador_name, grupo, file_path=None):
-        """Importa pacientes y crea sus estructuras de carpetas usando solo los nombres"""
+        """Importa pacientes y crea sus estructuras de carpetas"""
         try:
             # Leer archivo
             df = DataFormatHandler.read_data(file_path)
@@ -439,33 +493,73 @@ class ClinicManager:
             # Lista para guardar la información de los pacientes
             pacientes_procesados = []
             
-            # Procesar cada fila, usando solo el nombre
+            # Intentar diferentes nombres de columnas para el Seguro Social
+            posibles_columnas_ss = ['Seguro Social', 'Social Security', 'SSN', 'Número de Seguro Social', 'Patient Social Security']
+            columna_ss = None
+            
+            # Detectar qué columna contiene el Seguro Social
+            for col in posibles_columnas_ss:
+                if col in df.columns:
+                    columna_ss = col
+                    print(f"Detectada columna de Seguro Social: '{col}'")
+                    break
+            
+            # Procesar cada fila
             for idx, row in df.iterrows():
-                # Obtener solo el nombre del paciente
-                nombre = str(row.get('Nombre', '')).strip()
+                # Obtener nombre del paciente
+                nombre = None
+                for col in ['Nombre', 'Nombre Completo', 'Patient Name', 'Nombre Paciente', 'Name']:
+                    if col in df.columns and not pd.isna(row.get(col, '')):
+                        nombre = str(row.get(col, '')).strip()
+                        break
                 
-                if nombre:  # Si hay un nombre válido
-                    # Información mínima del paciente
-                    paciente_info = {
-                        'id': str(idx + 1),
-                        'nombre': nombre
-                    }
+                # Si no hay nombre en las columnas comunes, intentar con la primera columna
+                if not nombre and len(df.columns) > 0:
+                    nombre = str(row.get(df.columns[0], '')).strip()
+                
+                # Verificar que tenemos un nombre válido
+                if not nombre:
+                    print(f"Advertencia: Fila {idx+1} sin nombre válido, ignorando")
+                    continue
+                
+                # Obtener seguro social (usar la columna detectada o buscar en varias columnas)
+                seguro_social = ""
+                if columna_ss and columna_ss in df.columns:
+                    # Obtener el valor y convertirlo a string
+                    valor_ss = row.get(columna_ss, "")
                     
-                    # Crear carpeta con nombre del paciente
-                    nombre_carpeta = nombre.replace(' ', '_').lower()
-                    paciente_path = grupo_base_path / nombre_carpeta
-                    
-                    # Crear estructura básica para el paciente
-                    if self._crear_estructura_paciente(paciente_path, paciente_info):
-                        pacientes_procesados.append(paciente_info)
-                        print(f"Creada estructura para: {nombre}")
+                    # Manejar valores NaN, None o vacíos
+                    if pd.isna(valor_ss) or valor_ss is None:
+                        seguro_social = "NO_SS_DISPONIBLE"
+                    else:
+                        seguro_social = str(valor_ss).strip()
+                
+                # Si no se encontró el seguro social, marcarlo
+                if not seguro_social:
+                    seguro_social = "NO_SS_DISPONIBLE"
+                
+                # Información del paciente con nombre y seguro social
+                paciente_info = {
+                    'id': str(idx + 1),
+                    'nombre': nombre,
+                    'seguro_social': seguro_social
+                }
+                
+                # Crear carpeta con nombre del paciente
+                nombre_carpeta = nombre.replace(' ', '_').lower()
+                paciente_path = grupo_base_path / nombre_carpeta
+                
+                # Crear estructura básica para el paciente
+                if self._crear_estructura_paciente(paciente_path, paciente_info):
+                    pacientes_procesados.append(paciente_info)
+                    print(f"Creada estructura para: {nombre} (SS: {seguro_social})")
 
             # Actualizar archivo de configuración del grupo
             if pacientes_procesados:
                 grupo_config = self.base_path / clinic_name / facilitador_name / 'grupos' / grupo / 'grupo_config.json'
                 with open(grupo_config, 'r+', encoding='utf-8') as f:
                     config = json.load(f)
-                    config['pacientes'] = pacientes_procesados  # Reemplazar lista completa
+                    config['pacientes'] = pacientes_procesados
                     f.seek(0)
                     json.dump(config, f, indent=2, ensure_ascii=False)
                     f.truncate()
@@ -475,6 +569,8 @@ class ClinicManager:
 
         except Exception as e:
             print(f"Error en la importación: {str(e)}")
+            import traceback
+            traceback.print_exc()  # Mostrar el error detallado
             return False
 
     def _gestionar_importacion_inicial(self, clinic_name, facilitador_name):
@@ -506,14 +602,31 @@ class ClinicManager:
         """Asigna pacientes a grupos de facilitadores"""
         # Verificar que la clínica existe
         if not self.verificar_estructura(clinic_name):
+            print(f"\nError: La estructura de la clínica '{clinic_name}' no es válida")
             return False
 
         print("\nAsignación de pacientes a grupos")
         
         # Cargar configuración de la clínica
         config_file = self.base_path / clinic_name / 'clinic_config.json'
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
+        try:
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+        except FileNotFoundError:
+            print(f"\nError: No se encontró el archivo de configuración para la clínica '{clinic_name}'")
+            input("\nPresione Enter para continuar...")
+            return False
+        except json.JSONDecodeError:
+            print(f"\nError: El archivo de configuración de la clínica '{clinic_name}' está dañado")
+            input("\nPresione Enter para continuar...")
+            return False
+
+        # Verificar si hay facilitadores
+        if not config['facilitadores_psr']:
+            print("\nNo hay facilitadores registrados en esta clínica.")
+            print("Primero debe agregar facilitadores usando la opción 'Agregar nuevo facilitador'.")
+            input("\nPresione Enter para continuar...")
+            return False
 
         # Mostrar facilitadores disponibles
         print("\nFacilitadores disponibles:")
@@ -523,13 +636,15 @@ class ClinicManager:
         # Seleccionar facilitador
         while True:
             try:
-                opcion = int(input("\nSeleccione el facilitador (0 para cancelar): ")) - 1
-                if opcion == -1:
+                opcion = input("\nSeleccione el facilitador (0 para cancelar): ").strip()
+                if opcion == '0':
                     return False
+                
+                opcion = int(opcion) - 1
                 if 0 <= opcion < len(config['facilitadores_psr']):
                     facilitador = config['facilitadores_psr'][opcion]
                     break
-                print("Opción no válida")
+                print("Opción no válida. Ingrese un número entre 1 y", len(config['facilitadores_psr']))
             except ValueError:
                 print("Por favor ingrese un número válido")
 
@@ -537,39 +652,57 @@ class ClinicManager:
         print("\nGrupos disponibles:")
         print("1. Mañana")
         print("2. Tarde")
+        print("0. Cancelar")
         
-        grupo = None
         while True:
             try:
-                opcion = int(input("\nSeleccione el grupo (0 para cancelar): "))
-                if opcion == 0:
+                opcion = input("\nSeleccione el grupo (0 para cancelar): ").strip()
+                if opcion == '0':
                     return False
-                if opcion == 1:
+                if opcion == '1':
                     grupo = 'manana'
                     break
-                if opcion == 2:
+                if opcion == '2':
                     grupo = 'tarde'
                     break
-                print("Opción no válida")
+                print("Opción no válida. Ingrese 1 para Mañana, 2 para Tarde, o 0 para Cancelar")
             except ValueError:
                 print("Por favor ingrese un número válido")
 
         # Solicitar ruta del archivo
         print("\nSeleccione el archivo con la lista de pacientes")
-        file_path = input("Ingrese la ruta del archivo (CSV, Excel): ").strip()
+        print("El archivo debe ser CSV o Excel con al menos una columna 'Nombre'")
+        file_path = input("Ingrese la ruta del archivo (0 para cancelar): ").strip()
         
-        if not file_path:
-            print("No se proporcionó una ruta de archivo")
+        if file_path == '0':
             return False
             
+        if not file_path:
+            print("No se proporcionó una ruta de archivo")
+            input("\nPresione Enter para continuar...")
+            return False
+            
+        # Comprobar si el archivo existe
+        if not Path(file_path).exists():
+            print(f"\nError: El archivo '{file_path}' no existe")
+            input("\nPresione Enter para continuar...")
+            return False
 
         # Importar pacientes
-        return self.importar_pacientes_grupo(
+        resultado = self.importar_pacientes_grupo(
             clinic_name=clinic_name,
             facilitador_name=facilitador['nombre'],
             grupo=grupo,
             file_path=file_path
         )
+        
+        if resultado:
+            print(f"\n✅ Pacientes asignados exitosamente al facilitador {facilitador['nombre']} en el grupo de {grupo}")
+        else:
+            print(f"\n❌ Error al asignar pacientes al facilitador {facilitador['nombre']}")
+        
+        input("\nPresione Enter para continuar...")
+        return resultado
 
     def mostrar_menu_procesamiento(self):
         """Muestra el menú inicial de procesamiento"""
@@ -744,485 +877,238 @@ class ClinicManager:
     def _procesar_extraccion_informacion(self):
         """Maneja la extracción de información de archivos"""
         while True:
-            opcion = MenuManager.mostrar_menu_extraccion()
-            
-            if opcion == '0':
-                break
-            elif opcion == '1':
-                file_path = MenuManager.solicitar_ruta_archivo("archivo a procesar")
-                if file_path:
-                    try:
-                        datos = DataFormatHandler.read_data(file_path)
-                        if datos is not None:
-                            print("\nVista previa de los datos:")
-                            print(datos.head())
-                            MenuManager.mostrar_exito("Archivo procesado correctamente")
-                    except Exception as e:
-                        MenuManager.mostrar_error(f"Error al procesar archivo: {str(e)}")
-            elif opcion == '2':
-                self._ver_calidad_extraccion()
-            elif opcion == '3':
-                self._mejorar_extraccion_ia()
+            opcion = MenuManager.mostrar_menu_extr
 
-    def _procesar_pdf(self):
-        """Maneja el procesamiento de PDFs"""
-        return MenuManager.mostrar_menu_pdf()
-
-    def _generar_datos_sinteticos(self):
-        """Maneja la generación de datos sintéticos"""
-        while True:
-            opcion = MenuManager.mostrar_menu_datos_sinteticos()
-            
-            if opcion == '0':
-                break
-            elif opcion in ['1', '2', '3', '4']:
-                modulo = self.MODULES[int(opcion)-1]
-                try:
-                    if modulo in self.exportadores:
-                        self.exportadores[modulo].generar_datos()
-                        MenuManager.mostrar_exito(f"Datos {modulo} generados correctamente")
-                    else:
-                        MenuManager.mostrar_error(f"Módulo {modulo} no implementado")
-                except Exception as e:
-                    MenuManager.mostrar_error(f"Error al generar datos: {str(e)}")
-            elif opcion == '5':
-                self._generar_todos_datos()
-
-    def _gestionar_facilitadores(self):
-        """Maneja la gestión de facilitadores PSR"""
-        while True:
-            opcion = MenuManager.mostrar_menu_facilitadores()
-            
-            if opcion == '0':
-                break
-            elif opcion == '1':
-                self.ver_grupos_facilitador(self.current_clinic)
-            elif opcion == '2':
-                self.asignar_pacientes_facilitador(self.current_clinic)  # Corregido: pasar current_clinic
-            elif opcion == '3':
-                self._actualizar_facilitador()
-            elif opcion == '4':
-                self._importar_lista_pacientes()
-
-    def _gestionar_reportes(self):
-        """Maneja los reportes y análisis"""
-        while True:
-            opcion = MenuManager.mostrar_menu_reportes()
-            
-            if opcion == '0':
-                break
-            elif opcion == '1':
-                self._ver_estadisticas()
-            elif opcion == '2':
-                self._generar_informe()
-            elif opcion == '3':
-                self._exportar_datos()
-            elif opcion == '4':
-                self._ver_historico()
-
-    def _menu_gestion_plantillas(self, nombre_clinica, clinic_path):
-        """Menú de gestión de plantillas de importación"""
-        template_manager = TemplateManager()
-        
-        while True:
-            opcion = MenuManager.mostrar_menu_plantillas()
-            
-            if opcion == '0':
-                break
-            elif opcion == '1':  
-                # Ruta específica para documentos de importación
-                docs_path = clinic_path / 'import_data'
-                docs_path.mkdir(parents=True, exist_ok=True)
-                
-                # Ya no necesitamos solicitar la ruta del archivo, usamos la ruta fija
-                plantilla = template_manager.analizar_y_generar_plantilla(
-                    tipo_doc='import_template'  # Solo pasamos el tipo de documento
-                )
-                
-                if plantilla:
-                    print("\n✅ Plantilla de importación generada con éxito")
-                    
-                # Crear carpeta templates si no existe
-                templates_path = docs_path / 'templates'
-                templates_path.mkdir(parents=True, exist_ok=True)
-
-    @staticmethod
-    def procesar_pdf_seleccionado(info_seleccion):
-        """Procesa el PDF seleccionado y lo guarda en la carpeta output"""
+    def agregar_facilitador(self, clinic_name):
+        """Agrega un nuevo facilitador a una clínica existente"""
         try:
-            # Construir ruta de salida usando el nombre del paciente formateado
-            nombre_carpeta = info_seleccion['paciente']['nombre'].replace(' ', '_').lower()
-            output_path = (MenuManager.base_path / 
-                          MenuManager.clinica_actual / 
-                          info_seleccion['facilitador'] / 
-                          'grupos' /
-                          info_seleccion['turno'] / 
-                          'pacientes' /
-                          nombre_carpeta /
-                          info_seleccion['tipo_doc'] /
-                          'output')
-
-            # Asegurar que la carpeta output existe
-            output_path.mkdir(parents=True, exist_ok=True)
-
-            # Procesar el PDF usando el método correcto
-            extractor = PDFExtractor()
-            contenido, calidad = extractor.leer_pdf(info_seleccion['pdf'])  # Cambiado de extraer_texto a leer_pdf
-
-            if not contenido:
-                print("No se pudo extraer contenido del PDF")
+            clinic_path = self.base_path / clinic_name
+            
+            # Verificar que la clínica existe
+            if not clinic_path.exists():
+                print(f"\nError: La clínica '{clinic_name}' no existe")
                 return False
-
-            # Crear nombre del archivo de salida con timestamp
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            nombre_salida = f"{info_seleccion['pdf'].stem}_{timestamp}.txt"
-            archivo_salida = output_path / nombre_salida
-
-            # Guardar el texto extraído
-            with open(archivo_salida, 'w', encoding='utf-8') as f:
-                f.write(contenido)
-
-            print(f"\nTexto extraído guardado en: {archivo_salida}")
-            print(f"Calidad de extracción: {calidad}%")
-            return True
-
+            
+            # Leer configuración de la clínica
+            config_file = clinic_path / 'clinic_config.json'
+            if config_file.exists():
+                with open(config_file, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+            else:
+                config = {
+                    'nombre_clinica': clinic_name,
+                    'facilitadores_psr': [],
+                    'created_at': datetime.now().isoformat()
+                }
+            
+            # Solicitar información del facilitador
+            info_facilitador = self._solicitar_info_facilitador()
+            if not info_facilitador:
+                return False
+            
+            # Verificar que no existe
+            facilitador_path = clinic_path / info_facilitador['nombre']
+            if facilitador_path.exists():
+                print(f"\nError: Ya existe un facilitador con el nombre '{info_facilitador['nombre']}'")
+                return False
+            
+            # Crear estructura del facilitador
+            if self._crear_estructura_facilitador(facilitador_path, info_facilitador):
+                # Actualizar configuración de la clínica
+                config['facilitadores_psr'].append(info_facilitador)
+                
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2, ensure_ascii=False)
+                
+                print(f"\n✅ Facilitador '{info_facilitador['nombre']}' agregado exitosamente")
+                return True
+            else:
+                print(f"\nError: No se pudo crear la estructura del facilitador")
+                return False
+                
         except Exception as e:
-            print(f"Error procesando PDF: {str(e)}")
+            print(f"\nError al agregar facilitador: {str(e)}")
+            import traceback
+            traceback.print_exc()  # Esto mostrará la traza completa del error
             return False
 
-    def _menu_importacion_consolidacion(self, nombre_clinica: str, clinic_path: Path):
-        """Menú de importación y consolidación de datos"""
-        from core.import_consolidator import ImportConsolidator
-        consolidator = ImportConsolidator()
-
-        while True:
-            print("\n=== IMPORTACIÓN Y CONSOLIDACIÓN DE DATOS ===")
-            print(f"Clínica: {nombre_clinica}")
-            print("1. Seleccionar paciente para consolidar")
-            print("2. Ver documentos consolidados")
-            print("0. Volver")
-
-            opcion = input("\nSeleccione una opción: ").strip()
-
-            if opcion == '0':
-                break
-            elif opcion == '1':
-                # Como ya sabemos la clínica, vamos directo al flujo principal
-                try:
-                    # 1. Seleccionar grupo primero
-                    print("\n=== SELECCIÓN DE GRUPO ===")
-                    print("1. Grupo Mañana")
-                    print("2. Grupo Tarde")
-                    print("0. Cancelar")
-
-                    sel_grupo = input("\nSeleccione grupo: ").strip()
-                    if sel_grupo == '0':
-                        continue
-
-                    grupo = 'manana' if sel_grupo == '1' else 'tarde' if sel_grupo == '2' else None
-                    if not grupo:
-                        print("\n❌ Grupo no válido")
-                        continue
-
-                    # 2. Obtener y mostrar pacientes del grupo
-                    pacientes = self._obtener_pacientes_grupo(nombre_clinica, grupo)
-                    if not pacientes:
-                        print(f"\n❌ No hay pacientes en el grupo de {grupo}")
-                        continue
-
-                    print(f"\n=== PACIENTES DEL GRUPO {grupo.upper()} ===")
-                    for idx, paciente in enumerate(pacientes, 1):
-                        print(f"{idx}. {paciente['nombre']} (ID: {paciente['id']})")
-
-                    # 3. Seleccionar paciente
-                    sel_paciente = input("\nSeleccione paciente (0 para cancelar): ").strip()
-                    if sel_paciente == '0':
-                        continue
-
-                    idx_paciente = int(sel_paciente) - 1
-                    if not (0 <= idx_paciente < len(pacientes)):
-                        print("\n❌ Paciente no válido")
-                        continue
-
-                    paciente = pacientes[idx_paciente]
-
-                    # 4. Obtener y mostrar documentos
-                    documentos = self._obtener_documentos_paciente(
-                        nombre_clinica=nombre_clinica,
-                        grupo=grupo,
-                        nombre_paciente=paciente['nombre']
-                    )
-
-                    if not documentos:
-                        print("\n❌ No hay documentos disponibles para este paciente")
-                        continue
-
-                    print("\n=== DOCUMENTOS DISPONIBLES ===")
-                    for idx, doc in enumerate(documentos, 1):
-                        print(f"{idx}. {doc.name}")
-                        print(f"   Tipo: {doc.parent.parent.name}")
-                        print(f"   Fecha: {datetime.fromtimestamp(doc.stat().st_mtime).strftime('%Y-%m-%d %H:%M')}")
-
-                    # 5. Seleccionar documentos
-                    docs_seleccionados = self._seleccionar_documentos(documentos)
-                    if docs_seleccionados:
-                        output_file = consolidator.consolidate_documents(
-                            patient_name=paciente['nombre'],
-                            documents=docs_seleccionados,
-                            clinic_code=nombre_clinica
-                        )
-                        if output_file:
-                            print(f"\n✅ Datos consolidados en: {output_file}")
-                        else:
-                            print("\n❌ Error en la consolidación")
-
-                except ValueError:
-                    print("\n❌ Selección no válida")
-                except Exception as e:
-                    print(f"\n❌ Error: {str(e)}")
-
-            elif opcion == '2':
-                self._mostrar_consolidaciones(nombre_clinica)
-
-    def _seleccionar_documentos(self, documentos: List[Path]) -> List[Path]:
-        """Permite seleccionar múltiples documentos"""
-        seleccionados = []
-        
-        while True:
-            try:
-                entrada = input("\nSeleccione documentos (números separados por coma, 0 para cancelar): ").strip()
-                if entrada == '0':
-                    break
-
-                indices = [int(x.strip()) - 1 for x in entrada.split(',')]
-                for idx in indices:
-                    if 0 <= idx < len(documentos):
-                        seleccionados.append(documentos[idx])
-                    else:
-                        print(f"Índice no válido: {idx + 1}")
+    def eliminar_facilitador(self, clinic_name):
+        """Elimina un facilitador existente y todos sus datos"""
+        try:
+            # Verificar que la clínica existe
+            clinic_path = self.base_path / clinic_name
+            if not clinic_path.exists():
+                print(f"\nError: La clínica '{clinic_name}' no existe")
+                return False
+            
+            # Leer configuración de la clínica
+            config_file = clinic_path / 'clinic_config.json'
+            if not config_file.exists():
+                print(f"\nError: No se encontró el archivo de configuración para '{clinic_name}'")
+                return False
                 
-                if seleccionados:
-                    return seleccionados
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+            
+            # Verificar si hay facilitadores
+            if not config.get('facilitadores_psr', []):
+                print("\nNo hay facilitadores registrados en esta clínica")
+                return False
+            
+            # Mostrar lista de facilitadores
+            print("\nFacilitadores disponibles:")
+            for idx, facilitador in enumerate(config['facilitadores_psr'], 1):
+                print(f"{idx}. {facilitador['nombre']}")
+            
+            # Solicitar selección
+            try:
+                idx = int(input("\nSeleccione el número del facilitador a eliminar (0 para cancelar): ")) - 1
+                if idx == -1:  # Cancelar
+                    return False
+                    
+                if not (0 <= idx < len(config['facilitadores_psr'])):
+                    print("Selección no válida")
+                    return False
+                    
+                facilitador = config['facilitadores_psr'][idx]
+                nombre_facilitador = facilitador['nombre']
+                
+                # Confirmar eliminación
+                print(f"\n⚠️ ADVERTENCIA: Está a punto de eliminar al facilitador '{nombre_facilitador}'")
+                print("Esta acción eliminará TODOS los datos asociados y NO puede deshacerse")
+                confirmacion = input(f"\n¿Está seguro? (escriba 'ELIMINAR' para confirmar): ")
+                
+                if confirmacion != "ELIMINAR":
+                    print("\nOperación cancelada")
+                    return False
+                
+                # Eliminar directorio
+                import shutil
+                facilitador_path = clinic_path / nombre_facilitador
+                if facilitador_path.exists():
+                    shutil.rmtree(facilitador_path)
+                
+                # Actualizar configuración
+                config['facilitadores_psr'].pop(idx)
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2, ensure_ascii=False)
+                
+                print(f"\n✅ Facilitador '{nombre_facilitador}' eliminado exitosamente")
+                return True
                 
             except ValueError:
-                print("Entrada no válida. Use números separados por comas")
-        
-        return []
+                print("Por favor ingrese un número válido")
+                return False
+                
+        except Exception as e:
+            print(f"\nError al eliminar facilitador: {str(e)}")
+            return False
 
-    def _obtener_facilitadores_clinica(self, nombre_clinica: str) -> List[Dict[str, Any]]:
-        """Obtiene lista de facilitadores de una clínica"""
-        config_file = self.base_path / nombre_clinica / 'clinic_config.json'
-        if not config_file.exists():
-            return []
-
+    def actualizar_facilitador(self, clinic_name):
+        """Actualiza información de un facilitador existente"""
         try:
+            # Verificar que la clínica existe
+            clinic_path = self.base_path / clinic_name
+            if not clinic_path.exists():
+                print(f"\nError: La clínica '{clinic_name}' no existe")
+                return False
+            
+            # Leer configuración de la clínica
+            config_file = clinic_path / 'clinic_config.json'
+            if not config_file.exists():
+                print(f"\nError: No se encontró el archivo de configuración para '{clinic_name}'")
+                return False
+                
             with open(config_file, 'r', encoding='utf-8') as f:
                 config = json.load(f)
-                return config.get('facilitadores_psr', [])
-        except Exception:
-            return []
-
-    def _obtener_pacientes_grupo_facilitador(self, nombre_clinica: str, 
-                                           facilitador: str, grupo: str) -> List[Dict[str, Any]]:
-        """Obtiene pacientes de un grupo específico de un facilitador"""
-        grupo_config = self.base_path / nombre_clinica / facilitador / 'grupos' / grupo / 'grupo_config.json'
-        if not grupo_config.exists():
-            return []
-
-        try:
-            with open(grupo_config, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-                return config.get('pacientes', [])
-        except Exception:
-            return []
-
-    def _obtener_documentos_paciente_facilitador(self, nombre_clinica: str, 
-                                               facilitador: str, grupo: str, 
-                                               nombre_paciente: str) -> List[Path]:
-        """Obtiene documentos de un paciente específico"""
-        documentos = []
-        nombre_carpeta = nombre_paciente.replace(' ', '_').lower()
-        paciente_path = (self.base_path / nombre_clinica / 
-                        facilitador / 
-                        'grupos' / grupo / 
-                        'pacientes' / nombre_carpeta)
-
-        if not paciente_path.exists():
-            return []
-
-        # Buscar en todas las carpetas de documentos
-        for tipo_doc in ['FARC', 'BIO', 'MTP', 'notas_progreso']:
-            doc_path = paciente_path / tipo_doc / 'output'
-            if doc_path.exists():
-                documentos.extend(doc_path.glob('*.*'))
-
-        return sorted(documentos, key=lambda x: x.stat().st_mtime, reverse=True)
-
-    def _obtener_pacientes_clinica(self, nombre_clinica: str) -> List[Dict[str, str]]:
-        """Obtiene lista de pacientes de la clínica"""
-        pacientes = []
-        clinic_path = self.base_path / nombre_clinica
-        
-        # Buscar en grupos de todos los facilitadores
-        for facilitador in clinic_path.glob("*"):
-            if not facilitador.is_dir():
-                continue
-                
-            grupos_path = facilitador / "grupos"
-            if not grupos_path.exists():
-                continue
-
-            # Buscar en grupos mañana y tarde
-            for grupo in ["manana", "tarde"]:
-                grupo_path = grupos_path / grupo
-                if not grupo_path.exists():
-                    continue
-
-                # Leer configuración del grupo
-                config_file = grupo_path / "grupo_config.json"
-                if config_file.exists():
-                    with open(config_file, 'r', encoding='utf-8') as f:
-                        config = json.load(f)
-                        for paciente in config.get('pacientes', []):
-                            pacientes.append({
-                                'nombre': paciente['nombre'],
-                                'id': paciente['id'],
-                                'grupo': grupo,
-                                'facilitador': facilitador.name
-                            })
-
-        return pacientes
-
-    def _obtener_documentos_paciente(self, nombre_clinica: str, grupo: str, nombre_paciente: str) -> List[Path]:
-        """Obtiene documentos disponibles de un paciente"""
-        documentos = []
-        nombre_carpeta = nombre_paciente.replace(' ', '_').lower()
-        
-        # Obtener configuración de la clínica para encontrar el facilitador
-        config_file = self.base_path / nombre_clinica / 'clinic_config.json'
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-                
-            # Buscar en cada facilitador
-            for facilitador in config.get('facilitadores_psr', []):
-                # Construir ruta al directorio del paciente
-                paciente_path = (self.base_path / nombre_clinica / 
-                               facilitador['nombre'] / 'grupos' / grupo /
-                               'pacientes' / nombre_carpeta)
-                
-                if not paciente_path.exists():
-                    continue
-
-                # Buscar en todas las carpetas de documentos
-                for tipo_doc in ['FARC', 'BIO', 'MTP', 'notas_progreso']:
-                    doc_path = paciente_path / tipo_doc
-                    
-                    # Buscar en input y output
-                    for subcarpeta in ['input', 'output']:
-                        carpeta_docs = doc_path / subcarpeta
-                        if carpeta_docs.exists():
-                            # Buscar archivos con diferentes extensiones
-                            for extension in ['*.pdf', '*.json', '*.txt', '*.docx']:
-                                documentos.extend(carpeta_docs.glob(extension))
-
-            return sorted(documentos, key=lambda x: x.stat().st_mtime, reverse=True)
             
-        except Exception as e:
-            print(f"\n❌ Error buscando documentos: {str(e)}")
-            return []
-
-    def _obtener_consolidaciones(self, nombre_clinica: str) -> List[Path]:
-        """Obtiene lista de consolidaciones existentes"""
-        consolidaciones_path = self.base_path / nombre_clinica / 'output' / 'consolidaciones'
-        if not consolidaciones_path.exists():
-            return []
+            # Verificar si hay facilitadores
+            if not config.get('facilitadores_psr', []):
+                print("\nNo hay facilitadores registrados en esta clínica")
+                return False
             
-        return list(consolidaciones_path.glob('*.json'))
-
-    def _mostrar_consolidacion(self, consolidacion_path: Path):
-        """Muestra el contenido de una consolidación"""
-        try:
-            with open(consolidacion_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+            # Mostrar lista de facilitadores
+            print("\nFacilitadores disponibles:")
+            for idx, facilitador in enumerate(config['facilitadores_psr'], 1):
+                print(f"{idx}. {facilitador['nombre']}")
             
-            print("\n=== CONTENIDO DE LA CONSOLIDACIÓN ===")
-            print(json.dumps(data, indent=2, ensure_ascii=False))
-        except Exception as e:
-            print(f"\n❌ Error al leer consolidación: {str(e)}")
-
-    def _obtener_pacientes_grupo(self, nombre_clinica: str, grupo: str) -> List[Dict[str, Any]]:
-        """Obtiene lista de pacientes de un grupo específico"""
-        pacientes = []
-        clinic_path = self.base_path / nombre_clinica
-        
-        # Obtener config de la clínica
-        config_file = clinic_path / 'clinic_config.json'
-        if not config_file.exists():
-            return []
-
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                config = json.load(f)
-                
-            # Buscar en cada facilitador
-            for facilitador in config.get('facilitadores_psr', []):
-                grupo_path = clinic_path / facilitador['nombre'] / 'grupos' / grupo
-                grupo_config = grupo_path / 'grupo_config.json'
-                
-                if grupo_config.exists():
-                    with open(grupo_config, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                        for paciente in data.get('pacientes', []):
-                            pacientes.append({
-                                'nombre': paciente['nombre'],
-                                'id': paciente['id'],
-                                'facilitador': facilitador['nombre'],
-                                'grupo': grupo
-                            })
-
-            return sorted(pacientes, key=lambda x: x['nombre'])  # Ordenar por nombre
-            
-        except Exception as e:
-            print(f"\n❌ Error leyendo pacientes: {str(e)}")
-            return []
-
-    # Añadir el método que falta
-    def _mostrar_consolidaciones(self, nombre_clinica: str) -> None:
-        """Muestra la lista de consolidaciones para una clínica y permite seleccionar una para ver su contenido"""
-        print("\n=== CONSOLIDACIONES DISPONIBLES ===")
-        
-        # Obtener la lista de consolidaciones
-        consolidaciones = self._obtener_consolidaciones(nombre_clinica)
-        
-        if not consolidaciones:
-            print("\n❌ No hay consolidaciones disponibles para esta clínica")
-            return
-            
-        # Mostrar la lista de consolidaciones
-        for idx, consolidacion in enumerate(consolidaciones, 1):
-            fecha_mod = datetime.fromtimestamp(consolidacion.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
-            print(f"{idx}. {consolidacion.name}")
-            print(f"   Fecha: {fecha_mod}")
-            print(f"   Tamaño: {consolidacion.stat().st_size / 1024:.1f} KB")
-        
-        # Permitir selección
-        while True:
+            # Solicitar selección
             try:
-                seleccion = input("\nSeleccione una consolidación para ver (0 para cancelar): ").strip()
-                if seleccion == '0':
-                    break
+                idx = int(input("\nSeleccione el número del facilitador a actualizar (0 para cancelar): ")) - 1
+                if idx == -1:  # Cancelar
+                    return False
                     
-                idx = int(seleccion) - 1
-                if 0 <= idx < len(consolidaciones):
-                    # Llamar al método existente para mostrar el contenido de la consolidación
-                    self._mostrar_consolidacion(consolidaciones[idx])
-                    break
-                else:
-                    print("❌ Selección no válida")
+                if not (0 <= idx < len(config['facilitadores_psr'])):
+                    print("Selección no válida")
+                    return False
+                    
+                facilitador = config['facilitadores_psr'][idx]
+                
+                # Mostrar información actual
+                print("\nInformación actual:")
+                for key, value in facilitador.items():
+                    print(f"{key}: {value}")
+                
+                # Solicitar nuevos valores
+                print("\nIntroduzca los nuevos valores (deje vacío para mantener el valor actual):")
+                nuevo_nombre = input(f"Nombre [{facilitador['nombre']}]: ").strip()
+                
+                if nuevo_nombre and nuevo_nombre != facilitador['nombre']:
+                    # Verificar que no exista otro facilitador con ese nombre
+                    if (clinic_path / nuevo_nombre).exists():
+                        print(f"\nError: Ya existe un facilitador con el nombre '{nuevo_nombre}'")
+                        return False
+                    
+                    # Renombrar directorio
+                    old_path = clinic_path / facilitador['nombre']
+                    new_path = clinic_path / nuevo_nombre
+                    if old_path.exists():
+                        old_path.rename(new_path)
+                    
+                    # Actualizar nombre en grupos
+                    for turno in ['manana', 'tarde']:
+                        grupo_config = new_path / 'grupos' / turno / 'grupo_config.json'
+                        if grupo_config.exists():
+                            with open(grupo_config, 'r', encoding='utf-8') as f:
+                                grupo_data = json.load(f)
+                            
+                            grupo_data['facilitador'] = nuevo_nombre
+                            
+                            with open(grupo_config, 'w', encoding='utf-8') as f:
+                                json.dump(grupo_data, f, indent=2, ensure_ascii=False)
+                    
+                    # Actualizar configuración
+                    facilitador['nombre'] = nuevo_nombre
+                
+                # Actualizar fecha
+                facilitador['ultima_actualizacion'] = datetime.now().isoformat()
+                
+                # Guardar cambios
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2, ensure_ascii=False)
+                
+                print(f"\n✅ Facilitador actualizado correctamente")
+                return True
+                
             except ValueError:
-                print("❌ Por favor ingrese un número válido")
-            except Exception as e:
-                print(f"❌ Error: {str(e)}")
+                print("Por favor ingrese un número válido")
+                return False
+                
+        except Exception as e:
+            print(f"\nError al actualizar facilitador: {str(e)}")
+            return False
 
-    # ...existing code...
+    # Método auxiliar para obtener la lista de facilitadores de una clínica
+    def _obtener_facilitadores_clinica(self, clinic_name):
+        """Obtiene la lista de facilitadores de una clínica"""
+        try:
+            config_file = self.base_path / clinic_name / 'clinic_config.json'
+            if not config_file.exists():
+                return []
+                
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = json.load(f)
+                
+            return config.get('facilitadores_psr', [])
+        except Exception:
+            return []

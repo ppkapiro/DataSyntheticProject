@@ -1,0 +1,36 @@
+name: Data_synthetic
+channels:
+  - conda-forge
+  - defaults
+  - pip
+dependencies:
+  - python=3.11.11
+  - pip>=23.0.1
+  - setuptools>=65.5.1
+  - wheel>=0.38.4
+  # Dependencias principales (versiones compatibles con Python 3.11)
+  - numpy=1.24.3
+  - pandas=2.0.3
+  - python-dateutil>=2.8.2
+  - pillow=10.0.0
+  - pytesseract=0.3.10
+  - openpyxl=3.1.2
+  - pyyaml=6.0.1
+  - pdfminer.six=20221105
+  # Resto de dependencias
+  - pip:
+    # PDF processing
+    - PyPDF2>=3.0.0
+    - pdf2image>=1.16.3
+    # Data formats
+    - xlrd>=2.0.1
+    - odfpy>=1.4.1
+    - tabulate>=0.9.0
+    # AI Services
+    - google-cloud-vision>=3.4.0
+    # Development
+    - python-dotenv>=0.19.0
+    - pytest>=7.0.0
+    - black>=22.0.0
+    - flake8>=4.0.0
+    - faker>=8.0.0

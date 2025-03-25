@@ -1,0 +1,51 @@
+{
+  "facilitador": "Nuvia Estevez",
+  "turno": "tarde",
+  "pacientes": [
+    {
+      "id": "1",
+      "nombre": "MARGARITA FHAN",
+      "seguro_social": "NO_SS_DISPONIBLE"
+    },
+    {
+      "id": "2",
+      "nombre": "CARIDAD ECHEVARRIA",
+      "seguro_social": "048-97-6347"
+    },
+    {
+      "id": "3",
+      "nombre": "CARIDAD AYALA",
+      "seguro_social": "NO_SS_DISPONIBLE"
+    },
+    {
+      "id": "4",
+      "nombre": "CARLOS RAMIREZ",
+      "seguro_social": "NO_SS_DISPONIBLE"
+    },
+    {
+      "id": "5",
+      "nombre": "PASTOR ESPINOSA",
+      "seguro_social": "591-86-0285"
+    },
+    {
+      "id": "6",
+      "nombre": "SILVIA ALFONSO",
+      "seguro_social": "NO_SS_DISPONIBLE"
+    },
+    {
+      "id": "7",
+      "nombre": "Juana Cordero",
+      "seguro_social": "767-60-9528"
+    },
+    {
+      "id": "8",
+      "nombre": "Hilda Sotolongo",
+      "seguro_social": "595-65-0488"
+    },
+    {
+      "id": "9",
+      "nombre": "Isabel Fuentes",
+      "seguro_social": "595-65-0488"
+    }
+  ]
+}

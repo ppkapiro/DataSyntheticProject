@@ -1,0 +1,36 @@
+{
+  "facilitador": "Nuvia Estevez",
+  "turno": "manana",
+  "pacientes": [
+    {
+      "id": "1",
+      "nombre": "LORENZA GONZALEZ",
+      "seguro_social": "151-70-3597"
+    },
+    {
+      "id": "2",
+      "nombre": "JUAN MARTINEZ ESTEVEZ",
+      "seguro_social": "726-95-1116"
+    },
+    {
+      "id": "3",
+      "nombre": "ORLANDO VILLALOBOS",
+      "seguro_social": "590-57-5667"
+    },
+    {
+      "id": "4",
+      "nombre": "BARBARA FERNANDEZ",
+      "seguro_social": "NO_SS_DISPONIBLE"
+    },
+    {
+      "id": "5",
+      "nombre": "Eduardo Esquivel",
+      "seguro_social": "589-30-3470"
+    },
+    {
+      "id": "6",
+      "nombre": "Librada Gomez Rivero",
+      "seguro_social": "877-75-4970"
+    }
+  ]
+}

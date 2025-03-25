@@ -1,10 +1,18 @@
 import os
-import yaml
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
 import logging
 from datetime import datetime
+from typing import Dict, Any, Optional, Union
+
+# Importación condicional de yaml
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
+    logging.warning("pyyaml no está instalado. Se usará JSON como formato alternativo.")
+    logging.warning("Para habilitar YAML ejecute: pip install pyyaml")
 
 class ConfigManager:
     """
@@ -68,32 +76,29 @@ class ConfigManager:
         )
     
     def _load_config(self) -> Dict[str, Any]:
-        """Carga la configuración desde el archivo YAML o utiliza valores predeterminados"""
+        """Carga la configuración desde archivo"""
         default_config = self._get_default_config()
         
-        if self.config_file.exists():
+        # Si YAML está disponible, intentar cargar .yaml
+        if YAML_AVAILABLE:
+            yaml_path = self.project_root / 'config.yaml'
+            if yaml_path.exists():
+                try:
+                    with open(yaml_path, 'r', encoding='utf-8') as f:
+                        return yaml.safe_load(f)
+                except Exception as e:
+                    logging.error(f"Error cargando YAML: {e}")
+
+        # Intentar JSON como respaldo
+        json_path = self.project_root / 'config.json'
+        if json_path.exists():
             try:
-                with open(self.config_file, 'r', encoding='utf-8') as f:
-                    user_config = yaml.safe_load(f)
-                
-                # Combinar configuraciones (user_config tiene prioridad)
-                config = self._deep_merge(default_config, user_config)
-                logging.info(f"Configuración cargada desde {self.config_file}")
-                return config
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
             except Exception as e:
-                logging.error(f"Error al cargar configuración: {str(e)}")
-                logging.warning(f"Utilizando configuración predeterminada")
-                return default_config
-        else:
-            # Crear archivo de configuración con valores predeterminados
-            try:
-                with open(self.config_file, 'w', encoding='utf-8') as f:
-                    yaml.dump(default_config, f, default_flow_style=False, sort_keys=False)
-                logging.info(f"Archivo de configuración creado en {self.config_file}")
-            except Exception as e:
-                logging.error(f"Error al crear archivo de configuración: {str(e)}")
-            
-            return default_config
+                logging.error(f"Error cargando JSON: {e}")
+
+        return default_config
     
     def _deep_merge(self, dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
         """Combina dos diccionarios de manera recursiva"""
@@ -175,6 +180,73 @@ class ConfigManager:
             aws_env_vars = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']
             return all(var in os.environ for var in aws_env_vars)
             
+        return False
+    
+    @staticmethod
+    def check_cloud_vision_configuration():
+        """Verifica y valida la configuración de Google Cloud Vision"""
+        config = ConfigManager.load_config()
+        
+        # Verificar que el config tiene la estructura correcta
+        if not config:
+            print("Error: No se pudo cargar la configuración")
+            return False
+            
+        # Verificar que la sección de AI services existe
+        if 'ai_services' not in config:
+            print("Error: Sección 'ai_services' no encontrada en la configuración")
+            return False
+            
+        # Verificar que la configuración de Google Cloud Vision existe
+        if 'google_cloud_vision' not in config['ai_services']:
+            print("Error: Configuración de Google Cloud Vision no encontrada")
+            return False
+        
+        gcv_config = config['ai_services']['google_cloud_vision']
+        
+        # Verificar que Google Cloud Vision está habilitado
+        if not gcv_config.get('enabled', False):
+            print("Error: Google Cloud Vision no está habilitado")
+            return False
+            
+        # Verificar que existe el archivo de credenciales
+        if 'credentials_file' not in gcv_config:
+            print("Error: No se especificó archivo de credenciales para Google Cloud Vision")
+            return False
+            
+        # Lista de posibles ubicaciones para el archivo de credenciales
+        credentials_file = gcv_config['credentials_file']
+        project_root = Path(__file__).parent.parent
+        
+        possible_paths = [
+            Path(credentials_file),
+            project_root / credentials_file,
+            project_root / "config" / credentials_file,
+            project_root / "credentials" / credentials_file
+        ]
+        
+        for path in possible_paths:
+            if path.exists():
+                # Verificar formato del archivo JSON
+                try:
+                    with open(path, 'r') as f:
+                        import json
+                        credentials = json.load(f)
+                        
+                        # Verificar campos mínimos
+                        required_fields = ['type', 'project_id', 'private_key_id', 'private_key', 'client_email']
+                        if all(field in credentials for field in required_fields):
+                            print(f"✅ Archivo de credenciales de Google Cloud Vision válido: {path}")
+                            return True
+                        else:
+                            print(f"❌ Archivo de credenciales inválido (faltan campos requeridos): {path}")
+                            return False
+                            
+                except Exception as e:
+                    print(f"❌ Error al leer archivo de credenciales: {str(e)}")
+                    return False
+        
+        print("❌ No se encontró archivo de credenciales de Google Cloud Vision")
         return False
     
     def get_config(self) -> Dict[str, Any]:

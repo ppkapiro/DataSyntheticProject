@@ -1,9 +1,11 @@
 import sys
 import os
 import importlib
+import json  # Añadir esta importación
 from pathlib import Path
 import logging
 from enum import Enum, auto
+from datetime import datetime
 
 # Configurar logging
 logging.basicConfig(
@@ -26,6 +28,7 @@ class MenuType(Enum):
     DATOS = auto()
     REPORTES = auto()
     DESARROLLO = auto()
+    SECCIONES = auto()  # Nuevo tipo para el menú de secciones
 
 # Ahora importar los módulos necesarios
 try:
@@ -94,6 +97,108 @@ try:
                 print(f"{idx}. {clinica}")
                 
             return clinicas
+        
+        def eliminar_clinica(self, nombre_clinica):
+            """Elimina una clínica existente y todos sus datos"""
+            clinic_path = self.base_path / nombre_clinica
+            
+            if not clinic_path.exists():
+                print(f"\nError: La clínica '{nombre_clinica}' no existe")
+                return False
+                
+            # Verificar que el usuario realmente quiere eliminar la clínica
+            print(f"\n⚠️ ADVERTENCIA: Está a punto de eliminar la clínica '{nombre_clinica}'")
+            print("Esta acción eliminará TODOS los datos asociados y NO puede deshacerse.")
+            
+            confirmacion = input(f"\n¿Está seguro de eliminar la clínica '{nombre_clinica}'? (escriba 'ELIMINAR' para confirmar): ")
+            if confirmacion != "ELIMINAR":
+                print("\nOperación cancelada. La clínica no ha sido eliminada.")
+                return False
+                
+            try:
+                # Implementación segura para eliminar directorios con contenido
+                import shutil
+                shutil.rmtree(clinic_path)
+                print(f"\n✅ Clínica '{nombre_clinica}' eliminada exitosamente")
+                return True
+                
+            except Exception as e:
+                print(f"\nError al eliminar la clínica: {str(e)}")
+                return False
+        
+        def agregar_facilitador(self, clinic_name):
+            """Agrega un nuevo facilitador a una clínica existente"""
+            try:
+                clinic_path = self.base_path / clinic_name
+                
+                # Verificar que la clínica existe
+                if not clinic_path.exists():
+                    print(f"\nError: La clínica '{clinic_name}' no existe")
+                    return False
+                
+                # Leer configuración de la clínica
+                config_file = clinic_path / 'clinic_config.json'
+                if config_file.exists():
+                    with open(config_file, 'r', encoding='utf-8') as f:
+                        config = json.load(f)
+                else:
+                    config = {
+                        'nombre_clinica': clinic_name,
+                        'facilitadores_psr': [],
+                        'created_at': datetime.now().isoformat()
+                    }
+                
+                # Solicitar información del facilitador
+                print("\n=== REGISTRO DE FACILITADOR PSR ===")
+                nombre = input("Nombre del facilitador: ").strip()
+                if not nombre:
+                    print("El nombre es obligatorio")
+                    return False
+                
+                # Verificar que no existe
+                facilitador_path = clinic_path / nombre
+                if facilitador_path.exists():
+                    print(f"\nError: Ya existe un facilitador con el nombre '{nombre}'")
+                    return False
+                
+                # Crear estructura del facilitador
+                facilitador_path.mkdir(parents=True)
+                
+                # Crear estructura de grupos
+                for turno in ['manana', 'tarde']:
+                    grupo_path = facilitador_path / 'grupos' / turno
+                    grupo_path.mkdir(parents=True)
+                    
+                    # Crear carpeta de pacientes
+                    (grupo_path / 'pacientes').mkdir()
+                    
+                    # Configuración del grupo
+                    grupo_config = {
+                        'facilitador': nombre,
+                        'turno': turno,
+                        'pacientes': []
+                    }
+                    
+                    with open(grupo_path / 'grupo_config.json', 'w', encoding='utf-8') as f:
+                        json.dump(grupo_config, f, indent=2, ensure_ascii=False)
+                
+                # Actualizar configuración de la clínica
+                info_facilitador = {
+                    'nombre': nombre,
+                    'fecha_registro': datetime.now().isoformat()
+                }
+                
+                config['facilitadores_psr'].append(info_facilitador)
+                
+                with open(config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2, ensure_ascii=False)
+                
+                print(f"\n✅ Facilitador '{nombre}' agregado exitosamente")
+                return True
+                
+            except Exception as e:
+                print(f"\nError al agregar facilitador: {str(e)}")
+                return False
     
     class SimpleMenuManager:
         """Versión simple del gestor de menús para evitar dependencias circulares"""
@@ -118,6 +223,8 @@ try:
                 return self._show_menu_reportes()
             elif menu_type == MenuType.DESARROLLO:
                 return self._show_menu_desarrollo()
+            elif menu_type == MenuType.SECCIONES:
+                return self._show_menu_secciones()
             else:
                 print("Tipo de menú no válido")
                 return '0'
@@ -138,6 +245,8 @@ try:
             print("1. Crear nueva clínica")
             print("2. Seleccionar clínica")
             print("3. Listar clínicas")
+            print("4. Eliminar clínica")
+            print("5. Gestión de secciones")  # Nueva opción
             print("0. Volver")
             return input("\nSeleccione una opción: ").strip()
             
@@ -154,6 +263,9 @@ try:
             print("1. Ver grupos")
             print("2. Asignar pacientes")
             print("3. Actualizar información")
+            print("4. Importar lista de pacientes")
+            print("5. Agregar nuevo facilitador")
+            print("6. Eliminar facilitador")
             print("0. Volver")
             return input("\nSeleccione una opción: ").strip()
             
@@ -181,7 +293,7 @@ try:
             print("3. Ver logs")
             print("0. Volver")
             return input("\nSeleccione una opción: ").strip()
-        
+            
         def _show_menu_clinica_seleccionada(self):
             """Muestra el menú de opciones para una clínica específica"""
             print(f"\n=== CLÍNICA: {self.clinica_actual} ===")
@@ -192,13 +304,21 @@ try:
             print("5. Reportes y análisis")
             print("0. Volver al menú principal")
             return input("\nSeleccione una opción: ").strip()
+        
+        def _show_menu_secciones(self):
+            """Muestra el menú de gestión de secciones"""
+            print("\n=== GESTIÓN DE SECCIONES Y DOCUMENTOS ===")
+            print("1. Ver estructura de secciones")
+            print("2. Consolidar documentos por sección")
+            print("3. Analizar campo específico")
+            print("4. Forzar actualización de JSONs")
+            print("0. Volver")
+            return input("\nSeleccione una opción: ").strip()
     
     def main():
         """Función principal del sistema Notefy IA"""
         try:
             from utils.config_manager import ConfigManager
-            
-            # Obtener la configuración
             config = ConfigManager()
             
             # Verificar si se puede acceder a los atributos necesarios antes de usarlos
@@ -206,7 +326,6 @@ try:
                 raise AttributeError("El objeto ConfigManager no tiene el atributo 'project_root'")
                 
             data_path = config.get_data_path()
-            
             print("=== SISTEMA NOTEFY IA ===")
             print("Inicializando...")
             
@@ -240,7 +359,7 @@ try:
                             else:
                                 print("\nDebe seleccionar una clínica para acceder a esta opción.")
                                 input("Presione Enter para continuar...")
-                        
+                                
                     elif option == '3':  # Gestión de Facilitadores
                         gestion_facilitadores(clinic_manager, menu_manager)
                         
@@ -257,7 +376,7 @@ try:
                     logger.error(f"Error en el menú principal: {str(e)}")
                     print(f"\nError: {str(e)}")
                     input("Presione Enter para continuar...")
-        
+                    
         except Exception as e:
             logger.error(f"Error de inicialización: {str(e)}")
             print(f"\nError al iniciar el sistema: {str(e)}")
@@ -268,7 +387,7 @@ try:
             print("\nReporte este error si persiste.")
             input("Presione Enter para salir...")
             return
-    
+
     def gestion_clinicas(clinic_manager, menu_manager):
         """Gestión de clínicas"""
         while True:
@@ -280,21 +399,53 @@ try:
             elif option == '1':  # Crear nueva clínica
                 name = input("\nIngrese el nombre de la nueva clínica: ").strip()
                 if name:
-                    clinic_manager.crear_clinica(name)
-                    
+                    try:
+                        if clinic_manager.crear_clinica(name):
+                            # Si la clínica se creó exitosamente, preguntar si quiere seleccionarla
+                            if input("\n¿Desea seleccionar esta clínica ahora? (S/N): ").upper() == 'S':
+                                menu_manager.clinica_actual = name
+                                print(f"\nClínica seleccionada: {name}")
+                                gestionar_clinica_seleccionada(clinic_manager, menu_manager)
+                                break
+                    except Exception as e:
+                        print(f"\nError al crear la clínica: {str(e)}")
+                        import traceback
+                        traceback.print_exc()  # Muestra la traza completa del error
+                        input("\nPresione Enter para continuar...")
+                
             elif option == '2':  # Seleccionar clínica
-                clinica = clinic_manager.seleccionar_clinica()
-                if clinica:
-                    menu_manager.clinica_actual = clinica
-                    print(f"\nClínica seleccionada: {clinica}")
-                    # Mostrar el menú de la clínica seleccionada
-                    gestionar_clinica_seleccionada(clinic_manager, menu_manager)
-                    # Cuando vuelva, romper el ciclo para volver al menú principal
-                    break
+                try:
+                    clinica = clinic_manager.seleccionar_clinica()
+                    if clinica:
+                        # Verificar que la estructura es válida antes de seleccionarla
+                        if clinic_manager.verificar_estructura(clinica):
+                            menu_manager.clinica_actual = clinica
+                            print(f"\nClínica seleccionada: {clinica}")
+                            gestionar_clinica_seleccionada(clinic_manager, menu_manager)
+                            break
+                        else:
+                            print(f"\nLa estructura de la clínica '{clinica}' no es válida")
+                            print("Se recomienda crear una nueva clínica o revisar los archivos")
+                            input("\nPresione Enter para continuar...")
+                except Exception as e:
+                    print(f"\nError al seleccionar la clínica: {str(e)}")
+                    input("\nPresione Enter para continuar...")
                 
             elif option == '3':  # Listar clínicas
                 clinic_manager.listar_clinicas()
-    
+                input("\nPresione Enter para continuar...")
+                
+            elif option == '4':  # Eliminar clínica
+                clinica = clinic_manager.seleccionar_clinica()
+                if clinica:
+                    clinic_manager.eliminar_clinica(clinica)
+                    input("\nPresione Enter para continuar...")
+                    
+            elif option == '5':  # Gestión de secciones
+                clinica = clinic_manager.seleccionar_clinica()
+                if clinica:
+                    gestion_secciones(clinic_manager, menu_manager, clinica)
+
     def gestion_documentos(clinic_manager, menu_manager):
         """Gestión de documentos"""
         # Verificar primero si hay una clínica seleccionada
@@ -350,8 +501,9 @@ try:
                     print("No se pudieron importar datos del archivo")
             else:
                 print(f"\n❌ Archivo no encontrado: {ruta}")
-            
+                
             input("\nPresione Enter para continuar...")
+            
         except ImportError:
             print("\nEl módulo de lectura de archivos no está disponible.")
             print("Esta funcionalidad está en desarrollo.")
@@ -361,120 +513,48 @@ try:
         """Procesa documentos PDF utilizando el PDFExtractor"""
         try:
             # Intentar importar PDFExtractor y SearchVisualizer
-            from pdf_extractor.pdf_extractor import PDFExtractor
-            from utils.search_visualizer import SearchVisualizer
+            try:
+                from pdf_extractor.pdf_extractor import PDFExtractor
+                from utils.search_visualizer import SearchVisualizer
+                from utils.menu_manager import MenuManager  # Importar MenuManager para usar sus utilidades
+            except ImportError as e:
+                print(f"\nError: No se pudo importar módulos necesarios: {str(e)}")
+                print("Es posible que necesite instalar dependencias adicionales.")
+                print("Ejecute: pip install pdfminer.six PyPDF2 pillow pdf2image pytesseract")
+                input("\nPresione Enter para continuar...")
+                return
             
             print("\n=== PROCESAMIENTO DE PDF ===")
             
-            # Configurar ruta de salida basada en la clínica seleccionada
-            clinica_path = Path(os.path.join(data_path, menu_manager.clinica_actual))
-            output_dir = clinica_path / "output"
-            output_dir.mkdir(exist_ok=True, parents=True)
-            
-            # Tipos de documentos PDF soportados
-            tipos = {
-                '1': 'FARC',
-                '2': 'BIO',
-                '3': 'MTP',
-                '4': 'pdf_notas',
-                '5': 'pdf_otros'
-            }
-            
-            print("\nTipos de documentos PDF disponibles:")
-            for key, value in tipos.items():
-                print(f"{key}. {value}")
-            print("0. Volver")
-            
-            opcion = input("\nSeleccione el tipo de documento: ")
-            if opcion == '0' or opcion not in tipos:
+            # Verificar si hay una clínica seleccionada
+            if not menu_manager.clinica_actual:
+                print("\nError: Debe seleccionar una clínica primero.")
+                input("\nPresione Enter para continuar...")
                 return
             
-            tipo_seleccionado = tipos[opcion]
+            # Configurar ruta de salida basada en la clínica seleccionada
+            clinic_path = Path(os.path.join(data_path, menu_manager.clinica_actual))
+            if not clinic_path.exists():
+                print(f"\nError: La clínica {menu_manager.clinica_actual} no existe.")
+                input("\nPresione Enter para continuar...")
+                return
             
-            print(f"\nHa seleccionado: {tipo_seleccionado}")
+            # Actualizar MenuManager con la clínica actual
+            MenuManager.clinica_actual = menu_manager.clinica_actual
+            MenuManager.base_path = Path(data_path)
             
-            # Preguntar si se desea buscar automáticamente o proporcionar una ruta
-            file_path = input("\nIngrese la ruta del archivo PDF (dejar en blanco para buscar automáticamente): ").strip()
+            # Mostrar el menú de procesamiento de PDF
+            result = MenuManager.mostrar_menu_pdf()
             
-            if not file_path:
-                # Mostrar visualización de búsqueda
-                visualizer = SearchVisualizer(project_root=Path(__file__).parent)
-                print("\nIniciando búsqueda de documentos PDF...")
+            # Si el resultado no es None, significa que se ejecutó exitosamente
+            if result is not None:
+                print("\n✅ Proceso completado correctamente.")
                 
-                # Primero buscar en ubicaciones específicas
-                search_locations = [
-                    clinica_path / tipo_seleccionado.lower() / "input",
-                    clinica_path / "input",
-                    Path(__file__).parent / "input"
-                ]
-                
-                found_files = []
-                for location in search_locations:
-                    if location.exists():
-                        print(f"\nBuscando en: {location}")
-                        location_files = visualizer.visualize_search(
-                            location, 
-                            pattern="*.pdf", 
-                            max_depth=1,
-                            interactive=False
-                        )
-                        found_files.extend(location_files)
-                
-                # Si no se encuentra nada, hacer una búsqueda más amplia
-                if not found_files:
-                    print("\nNo se encontraron archivos en ubicaciones predefinidas.")
-                    print("Realizando búsqueda en estructura completa de la clínica...")
-                    found_files = visualizer.visualize_search(
-                        clinica_path,
-                        pattern="*.pdf",
-                        max_depth=3,
-                        interactive=True
-                    )
-                
-                if found_files:
-                    print("\nSeleccione un archivo de la lista:")
-                    for idx, file in enumerate(found_files, 1):
-                        print(f"{idx}. {file.name}")
-                    
-                    while True:
-                        try:
-                            selection = int(input("\nSeleccione archivo (0 para cancelar): "))
-                            if selection == 0:
-                                return
-                            if 1 <= selection <= len(found_files):
-                                file_path = str(found_files[selection - 1])
-                                break
-                            print("Opción no válida")
-                        except ValueError:
-                            print("Por favor ingrese un número válido")
-                else:
-                    print("\nNo se encontraron archivos PDF en el sistema.")
-                    return
-            
-            # Usar el PDFExtractor existente
-            extractor = PDFExtractor()
-            
-            # Procesar el PDF con la implementación existente
-            resultado = extractor.procesar_pdf(
-                file_path=file_path,
-                output_dir=str(output_dir),
-                clinic_initials=menu_manager.clinica_actual[:2].upper(),
-                tipo_pdf=tipo_seleccionado
-            )
-            
-            if resultado:
-                print(f"\n✅ PDF procesado correctamente: {resultado}")
-            else:
-                print("\n❌ Error al procesar el PDF")
-            
-            input("\nPresione Enter para continuar...")
-            
-        except ImportError as e:
-            print(f"\nEl módulo no está disponible: {str(e)}")
-            print("Esta funcionalidad está en desarrollo.")
-            input("\nPresione Enter para continuar...")
         except Exception as e:
+            import traceback
             print(f"\nError al procesar PDF: {str(e)}")
+            traceback.print_exc()
+            print("\nSe han encontrado errores en el procesamiento.")
             input("\nPresione Enter para continuar...")
 
     def extraer_texto_pdf(clinic_manager, menu_manager):
@@ -498,11 +578,11 @@ try:
                 input("\nPresione Enter para continuar...")
                 return
             
-            # Usar el extractor existente
-            extractor = PDFExtractor()
-            
             # Preguntar si se debe usar OCR
             usar_ocr = input("\n¿Desea utilizar OCR para la extracción? (S/N): ").upper() == 'S'
+            
+            # Usar el extractor existente
+            extractor = PDFExtractor()
             
             # Mostrar métodos disponibles
             print("\nUtilizando métodos de extracción disponibles...")
@@ -522,11 +602,22 @@ try:
                 
                 # Preguntar si se quiere guardar
                 if input("\n¿Desea guardar el texto extraído? (S/N): ").upper() == 'S':
-                    output_path = input("\nIngrese la ruta de salida (o presione Enter para usar la predeterminada): ").strip()
+                    # Definir output_path antes de usarlo
+                    if not menu_manager.clinica_actual:
+                        print("Error: Debe seleccionar una clínica primero.")
+                        input("\nPresione Enter para continuar...")
+                        return
+
+                    # Construir ruta de salida
+                    output_path = (clinic_manager.base_path / 
+                                 menu_manager.clinica_actual / 
+                                 'output' / 
+                                 datetime.now().strftime("%Y%m%d_%H%M%S") / 
+                                 os.path.splitext(file_path)[0] + "_texto.txt")
                     
-                    if not output_path:
-                        output_path = f"{os.path.splitext(file_path)[0]}_texto.txt"
-                        
+                    # Asegurar que el directorio existe
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+
                     with open(output_path, 'w', encoding='utf-8') as f:
                         f.write(contenido)
                         
@@ -538,6 +629,7 @@ try:
             print("\nEl módulo PDFExtractor no está disponible.")
             print("Esta funcionalidad está en desarrollo.")
             input("\nPresione Enter para continuar...")
+            
         except Exception as e:
             print(f"\nError al extraer texto: {str(e)}")
             input("\nPresione Enter para continuar...")
@@ -549,6 +641,7 @@ try:
             menu_manager.clinica_actual = clinic_manager.seleccionar_clinica()
             if not menu_manager.clinica_actual:
                 print("\nDebe seleccionar una clínica para gestionar facilitadores.")
+                input("\nPresione Enter para continuar...")
                 return
         
         try:
@@ -560,19 +653,87 @@ try:
             clinic_mgr.current_clinic = menu_manager.clinica_actual
             
             while True:
-                option = menu_manager.show_menu(MenuType.FACILITADORES)
+                # Mostrar menú de gestión de facilitadores
+                print("\n=== GESTIÓN DE FACILITADORES ===")
+                print(f"Clínica actual: {menu_manager.clinica_actual}")
+                print("1. Ver grupos")
+                print("2. Asignar pacientes")
+                print("3. Actualizar información")
+                print("4. Importar lista de pacientes")
+                print("5. Agregar nuevo facilitador")
+                print("6. Eliminar facilitador")
+                print("0. Volver")
+                
+                option = input("\nSeleccione una opción: ").strip()
                 
                 if option == '0':  # Volver
                     break
                     
                 elif option == '1':  # Ver grupos
-                    clinic_mgr.ver_grupos_facilitador(menu_manager.clinica_actual)
+                    # Verificar si hay facilitadores para mostrar
+                    config_file = clinic_manager.base_path / menu_manager.clinica_actual / 'clinic_config.json'
+                    try:
+                        with open(config_file, 'r', encoding='utf-8') as f:
+                            config = json.load(f)
+                        
+                        if not config.get('facilitadores_psr', []):
+                            print("\nNo hay facilitadores registrados en esta clínica.")
+                            print("Primero debe agregar facilitadores usando la opción 'Agregar nuevo facilitador'.")
+                            input("\nPresione Enter para continuar...")
+                            continue
+                            
+                        # Solicitar selección de facilitador
+                        print("\nFacilitadores disponibles:")
+                        for idx, facilitador in enumerate(config['facilitadores_psr'], 1):
+                            print(f"{idx}. {facilitador['nombre']}")
+                            
+                        sel_facilitador = input("\nSeleccione un facilitador (0 para cancelar): ").strip()
+                        if sel_facilitador == '0':
+                            continue
+                            
+                        try:
+                            idx_facilitador = int(sel_facilitador) - 1
+                            if 0 <= idx_facilitador < len(config['facilitadores_psr']):
+                                facilitador_name = config['facilitadores_psr'][idx_facilitador]['nombre']
+                                clinic_mgr.ver_grupos_facilitador(menu_manager.clinica_actual, facilitador_name)
+                            else:
+                                print("\nSelección de facilitador no válida")
+                        except ValueError:
+                            print("\nPor favor ingrese un número válido")
+                            
+                    except (FileNotFoundError, json.JSONDecodeError):
+                        print("\nError al leer la configuración de la clínica")
+                        
+                    input("\nPresione Enter para continuar...")
                     
                 elif option == '2':  # Asignar pacientes
-                    clinic_mgr.asignar_pacientes_facilitador(menu_manager.clinica_actual)
+                    result = clinic_mgr.asignar_pacientes_facilitador(menu_manager.clinica_actual)
+                    # Ya se maneja la pausa dentro de la función
                     
                 elif option == '3':  # Actualizar información
-                    clinic_mgr._actualizar_facilitador()
+                    clinic_mgr.actualizar_facilitador(menu_manager.clinica_actual)
+                    input("\nPresione Enter para continuar...")
+                    
+                elif option == '4':  # Importar lista de pacientes
+                    print("\nFuncionalidad de importación de pacientes")
+                    print("Esta función permite importar listas de pacientes desde archivos CSV o Excel.")
+                    print("Seleccione la opción 'Asignar pacientes' para utilizar esta funcionalidad.")
+                    input("\nPresione Enter para continuar...")
+                    
+                elif option == '5':  # Agregar facilitador
+                    result = clinic_mgr.agregar_facilitador(menu_manager.clinica_actual)
+                    if not result:
+                        print("\nNo se pudo agregar el facilitador. Intente nuevamente.")
+                    input("\nPresione Enter para continuar...")
+                    
+                elif option == '6':  # Eliminar facilitador
+                    clinic_mgr.eliminar_facilitador(menu_manager.clinica_actual)
+                    input("\nPresione Enter para continuar...")
+                    
+                else:
+                    print("\nOpción no válida. Por favor ingrese un número entre 0 y 6.")
+                    input("\nPresione Enter para continuar...")
+                    
         except ImportError:
             # Si el módulo no está disponible, mostrar mensaje de desarrollo
             print("\nEl módulo de gestión de facilitadores no está disponible.")
@@ -709,7 +870,7 @@ try:
             print("\nGenerando reportes...")
             print("Esta función está en desarrollo.")
             input("\nPresione Enter para continuar...")
-    
+
     def gestion_desarrollo(clinic_manager, menu_manager):
         """Herramientas de desarrollo"""
         option = menu_manager.show_menu(MenuType.DESARROLLO)
@@ -719,7 +880,7 @@ try:
             print("\nEjecutando herramientas de desarrollo...")
             print("Esta función está en desarrollo.")
             input("\nPresione Enter para continuar...")
-    
+
     def gestionar_clinica_seleccionada(clinic_manager, menu_manager):
         """Gestiona las opciones para una clínica específica"""
         while True:
@@ -742,10 +903,140 @@ try:
                 
             elif option == '5':  # Reportes y análisis
                 gestion_reportes(clinic_manager, menu_manager)
-    
+                
+    def gestion_secciones(clinic_manager, menu_manager, nombre_clinica):
+        """Gestión de secciones y documentos"""
+        from utils.section_manager import SectionManager
+        
+        section_manager = SectionManager(clinic_manager.base_path)
+        
+        # Asegurar que existe la estructura básica
+        if not section_manager.setup_clinic_structure(nombre_clinica):
+            print("\nError: No se pudo configurar la estructura de secciones")
+            return
+        
+        while True:
+            option = menu_manager.show_menu(MenuType.SECCIONES)
+            
+            if option == '0':
+                break
+                
+            elif option == '1':  # Ver estructura
+                mostrar_estructura_secciones(clinic_manager, nombre_clinica)
+                
+            elif option == '2':  # Consolidar documentos
+                consolidar_documentos_seccion(
+                    clinic_manager, 
+                    section_manager, 
+                    nombre_clinica
+                )
+                
+            elif option == '3':  # Analizar campo
+                analizar_campo_seccion(section_manager, nombre_clinica)
+                
+            elif option == '4':  # Forzar actualización
+                if section_manager.force_update(nombre_clinica):
+                    print("\n✅ JSONs actualizados correctamente")
+                else:
+                    print("\n❌ Error al actualizar JSONs")
+
+    def mostrar_estructura_secciones(clinic_manager, nombre_clinica):
+        """Muestra la estructura de carpetas y archivos"""
+        clinic_path = clinic_manager.base_path / nombre_clinica
+        resumen_path = clinic_path / 'Resumen_Secciones'
+        
+        print(f"\n=== ESTRUCTURA DE {nombre_clinica} ===")
+        print("\nCarpeta de resúmenes:")
+        if resumen_path.exists():
+            for json_file in resumen_path.glob('*.json'):
+                print(f"  └── {json_file.name}")
+        else:
+            print("  └── (No existe la carpeta de resúmenes)")
+
+    def consolidar_documentos_seccion(clinic_manager, section_manager, nombre_clinica):
+        """Permite consolidar documentos por sección"""
+        # Seleccionar facilitador
+        facilitadores = clinic_manager._obtener_facilitadores_clinica(nombre_clinica)
+        if not facilitadores:
+            print("\nNo hay facilitadores disponibles")
+            return
+            
+        print("\nFacilitadores disponibles:")
+        for idx, facilitador in enumerate(facilitadores, 1):
+            print(f"{idx}. {facilitador['nombre']}")
+            
+        try:
+            idx = int(input("\nSeleccione facilitador: ")) - 1
+            if not (0 <= idx < len(facilitadores)):
+                print("Facilitador no válido")
+                return
+                
+            facilitador = facilitadores[idx]['nombre']
+            
+            # Seleccionar tipo de documento
+            print("\nTipos de documento:")
+            tipos_doc = ['FARC', 'BIO', 'MTP', 'notas_progreso']
+            for idx, tipo in enumerate(tipos_doc, 1):
+                print(f"{idx}. {tipo}")
+                
+            idx = int(input("\nSeleccione tipo de documento: ")) - 1
+            if not (0 <= idx < len(tipos_doc)):
+                print("Tipo no válido")
+                return
+                
+            tipo_doc = tipos_doc[idx]
+            
+            # Consolidar documentos
+            if section_manager.consolidate_documents(
+                nombre_clinica, facilitador, tipo_doc
+            ):
+                print("\n✅ Documentos consolidados correctamente")
+            else:
+                print("\n❌ Error al consolidar documentos")
+                
+        except ValueError:
+            print("\nSelección no válida")
+            return
+
+    def analizar_campo_seccion(section_manager, nombre_clinica):
+        """Analiza un campo específico de los documentos"""
+        print("\nSeleccione sección:")
+        print("1. Mañana")
+        print("2. Tarde")
+        print("0. Cancelar")
+        
+        try:
+            opcion = input("\nSeleccione sección: ").strip()
+            if opcion == '0':
+                return
+                
+            seccion = 'manana' if opcion == '1' else 'tarde' if opcion == '2' else None
+            if not seccion:
+                print("Sección no válida")
+                return
+                
+            campo = input("\nIngrese el campo a analizar: ").strip()
+            if not campo:
+                print("Campo no válido")
+                return
+                
+            resultados = section_manager.analyze_section_data(
+                nombre_clinica, seccion, campo
+            )
+            
+            if resultados:
+                print("\nResultados del análisis:")
+                print(json.dumps(resultados, indent=2, ensure_ascii=False))
+            else:
+                print("\nNo se encontraron datos para analizar")
+                
+        except ValueError:
+            print("\nSelección no válida")
+            return
+
     if __name__ == "__main__":
         main()
-
+        
 except Exception as e:
     logger.error(f"Error de inicialización: {str(e)}")
     print(f"Error al iniciar el sistema: {str(e)}")
